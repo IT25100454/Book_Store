@@ -1,0 +1,40 @@
+:root {
+    --primary-color: #1A56DB;
+    --accent-color: #2ECC71;
+    --bg-color: #F8FAFF;
+    --text-color: #333333;
+    --header-bg: #ffffff;
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-color);
+}
+
+.text-primary { color: var(--primary-color) !important; }
+.bg-primary { background-color: var(--primary-color) !important; }
+.border-primary { border-color: var(--primary-color) !important; }
+
+.text-accent { color: var(--accent-color) !important; }
+.bg-accent { background-color: var(--accent-color) !important; }
+
+.hover-bg-primary:hover { background-color: #1545b0 !important; }
+.hover-bg-accent:hover { background-color: #25a25a !important; }
+
+.book-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--primary-color);
+}

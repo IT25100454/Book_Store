@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title=${book.title}, content=~{::content})}">
+<body>
+    <div th:fragment="content" class="bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            
+            <!-- Breadcrumb -->
+            <nav class="flex mb-8" aria-label="Breadcrumb" data-aos="fade-in">
+                <ol class="flex items-center space-x-2 text-sm text-gray-500 w-full">
+                    <li><a th:href="@{/}" class="hover:text-primary transition">Home</a></li>
+                    <li><i class="fa-solid fa-chevron-right text-xs mx-1"></i></li>
+                    <li><a th:href="@{/books}" class="hover:text-primary transition">Books</a></li>
+                    <li><i class="fa-solid fa-chevron-right text-xs mx-1"></i></li>
+                    <li><a th:href="@{/books(genre=${book.genre})}" class="hover:text-primary transition" th:text="${book.genre}">Genre</a></li>
+                    <li><i class="fa-solid fa-chevron-right text-xs mx-1"></i></li>
+                    <li class="text-gray-900 font-medium truncate w-32 md:w-auto" th:text="${book.title}">Title</li>
+                </ol>
+            </nav>
+
+            <div class="flex flex-col md:flex-row gap-12">
+                <!-- Book Cover -->
+                <div class="md:w-1/3" data-aos="fade-right">
+                    <div class="bg-gray-100 p-4 rounded-xl shadow-inner border border-gray-200 aspect-[2/3] relative">
+                        <img th:src="${book.coverUrl}" alt="Cover" class="w-full h-full object-contain rounded drop-shadow-2xl" onerror="this.src='/images/book-placeholder.png'">
+                    </div>
+                </div>
+
+                <!-- Book Info -->
+                <div class="md:w-2/3" data-aos="fade-left">
+                    <div class="mb-4">
+                        <span class="inline-block px-3 py-1 bg-blue-50 text-primary text-xs font-semibold rounded-full uppercase tracking-wide mb-3" th:text="${book.genre}">Genre</span>
+                        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 leading-tight" th:text="${book.title}">Title</h1>
+                        <p class="text-xl text-gray-600 font-medium">by <span class="text-gray-800" th:text="${book.author}">Author</span></p>
+                    </div>
+
+                    <div class="flex items-center gap-6 py-6 border-y border-gray-100 my-6">
+                        <div>
+                            <p class="text-3xl font-bold text-gray-900" th:text="${'Rs. ' + #numbers.formatDecimal(book.price, 1, 2)}">Rs. 19.99</p>
+                            <p class="text-sm text-gray-500" th:text="${'ISBN: ' + book.isbn}">ISBN</p>
+                        </div>
+                        <div class="ml-auto flex shrink-0">
+                            <span th:if="${book.stockQuantity > 5}" class="inline-flex flex-col items-center justify-center p-3 bg-green-50 rounded-lg text-green-700 h-full">
+                                <i class="fa-solid fa-check-circle mb-1 text-lg"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-center">In Stock</span>
+                            </span>
+                            <span th:if="${book.stockQuantity > 0 and book.stockQuantity <= 5}" class="inline-flex flex-col items-center justify-center p-3 bg-yellow-50 rounded-lg text-yellow-700 h-full">
+                                <i class="fa-solid fa-triangle-exclamation mb-1 text-lg"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-center" th:text="${'Only ' + book.stockQuantity + ' left'}">Low Stock</span>
+                            </span>
+                            <span th:if="${book.stockQuantity == 0}" class="inline-flex flex-col items-center justify-center p-3 bg-red-50 rounded-lg text-red-700 h-full">
+                                <i class="fa-solid fa-xmark-circle mb-1 text-lg"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-center">Out of Stock</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-lg font-bold text-gray-900 mb-3">Description</h3>
+                        <p class="text-gray-600 leading-relaxed break-words" th:text="${book.description}">Description text goes here...</p>
+                    </div>
+
+                    <form th:action="@{/cart/add}" method="post" class="flex flex-col sm:flex-row items-end sm:items-center gap-4 bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        <input type="hidden" name="bookId" th:value="${book.id}">
+                        <div class="w-full sm:w-24">
+                            <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Qty</label>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1" th:max="${book.stockQuantity > 0 ? book.stockQuantity : 1}" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-base py-3 px-4 text-center" th:disabled="${book.stockQuantity <= 0}">
+                        </div>
+                        <button type="submit" class="w-full sm:flex-grow flex justify-center items-center py-3 px-6 border border-transparent rounded-md shadow-sm text-base font-bold text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 transform hover:-translate-y-1" th:disabled="${book.stockQuantity <= 0}" th:classappend="${book.stockQuantity <= 0 ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed hover:-translate-y-0 shadow-none' : ''}">
+                            <i class="fa-solid fa-cart-shopping mr-2"></i> Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

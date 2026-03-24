@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:fragment="html(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title != null ? title + ' | PageTurner' : 'PageTurner Bookstore'}">PageTurner Bookstore</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1A56DB',
+                        accent: '#2ECC71',
+                        background: '#F8FAFF'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+
+        // Notification badge refresh
+        function refreshNotificationCount() {
+            fetch('/notifications/count')
+                .then(r => r.ok ? r.json() : null)
+                .then(count => {
+                    const badge = document.getElementById('notif-badge');
+                    if (badge) {
+                        if (count > 0) {
+                            badge.textContent = count;
+                            badge.classList.remove('hidden');
+                        } else {
+                            badge.classList.add('hidden');
+                        }
+                    }
+                })
+                .catch(err => console.error('Failed to fetch notifications', err));
+        }
+
+        // Check every 30 seconds if user is logged in
+        if (document.getElementById('notif-badge')) {
+            setInterval(refreshNotificationCount, 30000);
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/custom.css}">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-background min-h-screen flex flex-col">
+
+    <!-- Navigation Fragment -->
+    <nav th:fragment="navbar" class="bg-white shadow sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a th:href="@{/}" class="flex-shrink-0 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open text-primary text-2xl"></i>
+                        <span class="font-bold text-xl text-gray-900 tracking-tight">PageTurner</span>
+                    </a>
+                    <div class="hidden sm:ml-8 sm:flex sm:space-x-8">
+                        <a th:href="@{/}" 
+                           th:classappend="${title == 'Home' ? 'border-primary text-primary' : 'border-transparent text-gray-900'}"
+                           class="inline-flex items-center px-1 pt-1 border-b-2 hover:border-primary nav-link font-medium transition">Home</a>
+                        <a th:href="@{/books}" 
+                           th:classappend="${title == 'Browse Books' ? 'border-primary text-primary' : 'border-transparent text-gray-900'}"
+                           class="inline-flex items-center px-1 pt-1 border-b-2 hover:border-primary nav-link font-medium transition">Browse Books</a>
+                    </div>
+                </div>
+                
+                <!-- Right Side Auth/Cart -->
+                <div class="flex items-center gap-2 sm:gap-4">
+                            <!-- Notification Bell (logged in users only) -->
+                            <div sec:authorize="isAuthenticated()" class="relative">
+                                <a th:href="@{/notifications}" class="relative inline-flex items-center p-2 text-gray-600 hover:text-primary transition-colors" title="Notifications">
+                                    <i class="fa-solid fa-bell text-xl"></i>
+                                    <!-- Unread Badge -->
+                                    <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}"
+                                          id="notif-badge"
+                                          th:text="${unreadNotificationCount}"
+                                          class="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center animate-pulse border-2 border-white">
+                                    </span>
+                                </a>
+                            </div>
+
+                            <a th:href="@{/cart}" class="relative p-2 text-gray-600 hover:text-primary transition-colors">
+                        <i class="fa-solid fa-cart-shopping text-xl group-hover:scale-110 transition-transform"></i>
+                        <!-- Optional cart badge -->
+                    </a>
+                    
+                    <div sec:authorize="!isAuthenticated()" class="flex space-x-2">
+                        <a th:href="@{/login}" class="text-primary border border-primary hover:bg-primary hover:text-white px-4 py-2 rounded-md font-medium transition text-sm">Login</a>
+                        <a th:href="@{/register}" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition text-sm">Sign Up</a>
+                    </div>
+                    
+                    <div sec:authorize="isAuthenticated()" class="flex items-center space-x-4">
+                        <span sec:authorize="hasRole('ADMIN')">
+                            <a th:href="@{/admin}" class="text-accent font-semibold hover:text-green-600 transition"><i class="fa-solid fa-chart-line mr-1"></i> Admin</a>
+                        </span>
+                        
+                        <!-- Dropdown wrapper - must have relative positioning and group class -->
+                        <div class="relative group">
+                        
+                          <!-- Trigger button -->
+                          <button class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
+                            <i class="fas fa-user-circle"></i>
+                            <span th:text="${#authentication.name}">user@email.com</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                          </button>
+                        
+                          <!-- Dropdown menu - uses group-hover, has padding-top bridge to prevent gap -->
+                          <div class="absolute right-0 top-full pt-2 hidden group-hover:block z-50 min-w-48">
+                            <div class="bg-white rounded-xl shadow-lg border border-gray-100 py-2 overflow-hidden">
+                              <a th:href="@{/profile}"
+                                 class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
+                                <i class="fas fa-user w-4"></i> My Profile
+                              </a>
+                              <!-- Note: /orders might be handled by profile page or separate, user specified /orders below -->
+                              <a th:href="@{/profile}"
+                                 class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
+                                <i class="fas fa-box w-4"></i> My Orders
+                              </a>
+                              <div class="border-t border-gray-100 my-1"></div>
+                              <form th:action="@{/logout}" method="post">
+                                <button type="submit" class="w-full text-left flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 transition">
+                                    <i class="fas fa-sign-out-alt w-4"></i> Logout
+                                </button>
+                              </form>
+                            </div>
+                          </div>
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content injected here -->
+    <main class="flex-grow">
+        <div th:replace="${content}"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex justify-center md:justify-start space-x-6 md:order-2">
+                    <a href="#" class="text-gray-400 hover:text-primary"><i class="fa-brands fa-facebook fa-xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-primary"><i class="fa-brands fa-twitter fa-xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-primary"><i class="fa-brands fa-instagram fa-xl"></i></a>
+                </div>
+                <div class="mt-8 md:mt-0 md:order-1">
+                    <p class="text-center text-base text-gray-500">
+                        &copy; 2026 PageTurner Bookstore. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AOS Init -->
+        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <script th:src="@{/js/main.js}"></script>
+        
+        <!-- Fallbacks for CDNs -->
+        <script>
+            window.onload = function() {
+                if(typeof AOS === 'undefined') {
+                    console.log('AOS failed to load. Elements might not animate properly.');
+                    document.querySelectorAll('[data-aos]').forEach(el => el.style.opacity = '1');
+                }
+            };
+        </script>
+    </footer>
+
+</body>
+</html>

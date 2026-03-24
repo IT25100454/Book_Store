@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Checkout', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="bg-gray-50 min-h-[calc(100vh-140px)] py-12">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8" data-aos="fade-up">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-8 text-center">Checkout</h1>
+            
+            <div class="bg-white rounded-xl shadow-md border border-gray-100 p-8">
+                <form th:action="@{/checkout/process}" method="post">
+                    <div class="mb-8">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Shipping Information</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                                <input type="text" readonly th:value="${user.name}" class="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm sm:text-sm text-gray-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Email Address</label>
+                                <input type="email" readonly th:value="${user.email}" class="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm sm:text-sm text-gray-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="shippingAddress" class="block text-sm font-medium text-gray-700">Shipping Address (Edit if necessary)</label>
+                            <textarea id="shippingAddress" name="shippingAddress" rows="3" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm" th:text="${user.address}"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <h2 class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Payment Details</h2>
+                        <div class="bg-blue-50 border border-blue-200 rounded-md p-4 flex items-start">
+                            <i class="fa-solid fa-circle-info text-primary mt-0.5 mr-3"></i>
+                            <p class="text-sm text-blue-800">This is a demonstration project. No actual payment details are required. Your order will be processed as "Payment on Delivery" automatically.</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="text-xl">
+                            <span class="text-gray-600">Total Amount:</span>
+                            <span class="font-extrabold text-primary text-2xl ml-2" th:text="${'Rs. ' + #numbers.formatDecimal(total, 1, 2)}">Rs. 0.00</span>
+                        </div>
+                        <button type="submit" class="w-full md:w-auto flex justify-center py-3 px-8 border border-transparent rounded-md shadow-md text-base font-bold text-white bg-accent hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent transition transform hover:-translate-y-1">
+                            Confirm Order
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

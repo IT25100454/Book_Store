@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Internal Error', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="min-h-[calc(100vh-140px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-xl border border-gray-100 text-center" data-aos="fade-up">
+            <i class="fa-solid fa-triangle-exclamation text-6xl text-orange-500 mb-4"></i>
+            <h1 class="text-3xl font-extrabold text-gray-900">500 - Internal Server Error</h1>
+            <p class="text-gray-600 mt-2">Oops! Something went wrong on our end. Please try again later.</p>
+            <p th:if="${error}"
+               class="text-sm text-gray-500 mt-2"
+               th:text="'Details: ' + ${error}">
+            </p>
+            <div class="mt-6">
+                <a th:href="@{/}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-blue-700 focus:outline-none transition">
+                    <i class="fa-solid fa-house mr-2"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

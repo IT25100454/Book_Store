@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Admin Dashboard', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="flex min-h-[calc(100vh-64px)] bg-gray-50">
+        <aside th:replace="~{admin/layout :: sidebar}"></aside>
+        <main class="flex-1 w-full overflow-x-hidden p-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4" data-aos="fade-right">
+                <h1 class="text-3xl font-extrabold text-gray-900">Dashboard Overview</h1>
+                <div class="flex space-x-2">
+                    <a th:href="@{/admin/export-inventory}" class="bg-accent hover:bg-green-600 border border-transparent text-white font-medium py-2 px-4 rounded shadow-sm transition"><i class="fa-solid fa-file-export mr-1"></i> Export Inventory</a>
+                </div>
+            </div>
+
+            <!-- Stats grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center hover:shadow-md transition-shadow duration-300" data-aos="fade-up" data-aos-delay="200">
+                    <div class="p-4 rounded-full bg-purple-100 text-purple-600 mr-4">
+                        <i class="fa-solid fa-book text-2xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Total Books</p>
+                        <p class="text-3xl font-bold text-gray-900" th:text="${totalBooks}">0</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center hover:shadow-md transition-shadow duration-300" data-aos="fade-up" data-aos-delay="0">
+                    <div class="p-4 rounded-full bg-blue-100 text-primary mr-4">
+                        <i class="fa-solid fa-bag-shopping text-2xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Total Orders</p>
+                        <p class="text-3xl font-bold text-gray-900" th:text="${totalOrders}">0</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center hover:shadow-md transition-shadow duration-300" data-aos="fade-up" data-aos-delay="300">
+                    <div class="p-4 rounded-full bg-orange-100 text-orange-600 mr-4">
+                        <i class="fa-solid fa-users text-2xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Total Users</p>
+                        <p class="text-3xl font-bold text-gray-900" th:text="${totalUsers}">0</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center hover:shadow-md transition-shadow duration-300" data-aos="fade-up" data-aos-delay="100">
+                    <div class="p-4 rounded-full bg-red-100 text-red-600 mr-4">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Low Stock</p>
+                        <p class="text-3xl font-bold text-gray-900" th:text="${#lists.size(lowStockBooks)}">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Sales Chart -->
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6" data-aos="fade-right">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4">Monthly Sales Revenue</h2>
+                    <canvas id="salesChart" height="100"></canvas>
+                </div>
+                
+                <!-- Inventory Alerts -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6" data-aos="fade-left">
+                    <div class="flex items-center justify-between mb-4 border-b pb-2">
+                        <h2 class="text-lg font-bold text-gray-900">Low Stock Alerts</h2>
+                        <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded-full" th:text="${#lists.size(lowStockBooks)} + ' Items'">0 Items</span>
+                    </div>
+                    
+                    <div th:if="${#lists.isEmpty(lowStockBooks)}" class="text-center py-8">
+                        <i class="fa-solid fa-check-circle text-4xl text-green-200 mb-2"></i>
+                        <p class="text-gray-500">All books are sufficiently stocked.</p>
+                    </div>
+                    
+                    <ul th:if="${not #lists.isEmpty(lowStockBooks)}" class="divide-y divide-gray-100 overflow-y-auto max-h-80">
+                        <li th:each="book : ${lowStockBooks}" class="py-3 flex justify-between items-center group">
+                            <div class="max-w-[70%]">
+                                <a th:href="@{/admin/books/edit/{id}(id=${book.id})}" class="text-sm font-semibold text-red-600 hover:text-red-800 transition truncate block" th:text="${book.title}">Book Title</a>
+                                <p class="text-xs text-gray-500" th:text="${'ISBN: ' + book.isbn}">ISBN</p>
+                            </div>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold leading-4 bg-red-100 text-red-800">
+                                Qty: <span th:text="${book.stockQuantity}" class="ml-1">0</span>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+        
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                var ctx = document.getElementById('salesChart').getContext('2d');
+                var labels = /*[[${chartLabels}]]*/ [];
+                var data = /*[[${chartData}]]*/ [];
+                
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Revenue (Rs.)',
+                            data: data,
+                            backgroundColor: 'rgba(26, 86, 219, 0.7)',
+                            borderColor: 'rgba(26, 86, 219, 1)',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value, index, values) {
+                                        return 'Rs. ' + value.toLocaleString();
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
+        
+        <script th:if="${success}">
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '[[${success}]]',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            });
+        </script>
+        <script th:if="${error}">
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '[[${error}]]',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            });
+        </script>
+        </main>
+    </div>
+</body>
+</html>

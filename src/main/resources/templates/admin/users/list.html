@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Manage Users', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="flex min-h-[calc(100vh-64px)] bg-gray-50">
+        <aside th:replace="~{admin/layout :: sidebar}"></aside>
+        <main class="flex-1 w-full overflow-x-hidden p-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" data-aos="fade-up">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <div class="flex items-center gap-3">
+                    <a th:href="@{/admin}" class="text-gray-400 hover:text-primary transition"><i class="fa-solid fa-arrow-left"></i></a>
+                    <h1 class="text-3xl font-extrabold text-gray-900">Manage Users</h1>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr th:each="u : ${users}" class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-primary font-bold">
+                                            <span th:text="${#strings.substring(u.name, 0, 1)}">U</span>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-bold text-gray-900" th:text="${u.name}">Name</div>
+                                            <div class="text-xs text-gray-500">
+                                                <span th:text="${u.email}">Email</span> | <span th:text="${u.username}">Username</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span th:class="${u.role == 'ROLE_ADMIN' ? 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold leading-4 bg-purple-100 text-purple-800' : 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold leading-4 bg-gray-100 text-gray-800'}" th:text="${u.role}">
+                                        ROLE
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span th:class="${u.active ? 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold leading-4 bg-green-100 text-green-800' : 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold leading-4 bg-red-100 text-red-800'}" th:text="${u.active ? 'Active' : 'Inactive'}">
+                                        Status
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex justify-end space-x-2">
+                                        <!-- Toggle Status -->
+                                        <form th:action="@{/admin/users/toggle-active}" method="post" th:if="${u.username != 'admin'}">
+                                            <input type="hidden" name="userId" th:value="${u.id}">
+                                            <button type="submit" class="px-3 py-1 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 rounded text-xs font-semibold transition">
+                                                Toggle Status
+                                            </button>
+                                        </form>
+                                        
+                                        <!-- Promote -->
+                                        <form th:action="@{/admin/users/promote}" method="post" th:if="${u.role != 'ROLE_ADMIN'}">
+                                            <input type="hidden" name="userId" th:value="${u.id}">
+                                            <button type="submit" class="px-3 py-1 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded text-xs font-semibold transition" onclick="return confirm('Promote this user to Admin?');">
+                                                Make Admin
+                                            </button>
+                                        </form>
+
+                                        <!-- Delete User -->
+                                        <button th:data-user-id="${u.id}" th:data-user-name="${u.name}" onclick="confirmDeleteUser(this)"
+                                                class="px-3 py-1 bg-red-50 text-red-700 hover:bg-red-100 rounded text-xs font-semibold transition">
+                                            <i class="fa-solid fa-trash mr-1"></i> Delete
+                                        </button>
+
+                                        <!-- Hidden form for delete submission -->
+                                        <form th:id="'deleteUserForm-' + ${u.id}"
+                                              th:action="@{/admin/users/delete/{id}(id=${u.id})}"
+                                              method="post" style="display:none;">
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Delete User Confirmation Script -->
+        <script>
+        function confirmDeleteUser(btn) {
+            var userId = btn.getAttribute('data-user-id');
+            var userName = btn.getAttribute('data-user-name');
+            Swal.fire({
+                title: 'Delete User?',
+                text: 'Are you sure you want to permanently delete ' + userName + '? This cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('deleteUserForm-' + userId).submit();
+                }
+            });
+        }
+        </script>
+        
+        <script th:if="${success}">
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '[[${success}]]',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            });
+        </script>
+        </main>
+    </div>
+</body>
+</html>

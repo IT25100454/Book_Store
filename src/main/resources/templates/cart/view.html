@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Shopping Cart', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="bg-gray-50 min-h-[calc(100vh-140px)] py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-8" data-aos="fade-right">Your Shopping Cart</h1>
+
+            <div th:if="${#lists.isEmpty(cart)}" class="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-100" data-aos="fade-up">
+                <i class="fa-solid fa-cart-arrow-down text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-2xl font-medium text-gray-900 mb-2">Your cart is empty</h3>
+                <p class="text-gray-500 mb-8">Looks like you haven't added any books to your cart yet.</p>
+                <a th:href="@{/books}" class="bg-primary hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-md transition shadow-md">Continue Shopping</a>
+            </div>
+
+            <div th:if="${not #lists.isEmpty(cart)}" class="flex flex-col lg:flex-row gap-8" data-aos="fade-up">
+                <!-- Cart Items -->
+                <div class="lg:w-2/3">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <ul class="divide-y divide-gray-200">
+                            <li th:each="item : ${cart}" class="p-6 flex flex-col sm:flex-row gap-6 hover:bg-gray-50 transition">
+                                <div class="w-full sm:w-24 flex-shrink-0">
+                                    <img th:src="${item.book.coverUrl}" alt="Cover" class="w-24 h-32 object-cover rounded shadow-sm">
+                                </div>
+                                <div class="flex-grow flex flex-col justify-between">
+                                    <div>
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <h3 class="text-lg font-bold text-gray-900 line-clamp-2">
+                                                    <a th:href="@{/books/{id}(id=${item.book.id})}" class="hover:text-primary transition" th:text="${item.book.title}">Title</a>
+                                                </h3>
+                                                <p class="text-sm text-gray-600 mb-1" th:text="${item.book.author}">Author</p>
+                                                <p class="text-sm text-primary font-bold" th:text="${'Rs. ' + #numbers.formatDecimal(item.book.price, 1, 2)}">Rs. 19.99</p>
+                                            </div>
+                                            <form th:action="@{/cart/remove}" method="post">
+                                                <input type="hidden" name="bookId" th:value="${item.book.id}">
+                                                <button type="submit" class="text-gray-400 hover:text-red-500 transition p-2" title="Remove item">
+                                                    <i class="fa-solid fa-trash-can shadow-sm"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 flex flex-wrap items-center justify-between gap-4">
+                                        <form th:action="@{/cart/update}" method="post" class="flex items-center">
+                                            <input type="hidden" name="bookId" th:value="${item.book.id}">
+                                            <label class="sr-only" for="quantity">Quantity</label>
+                                            <select id="quantity" name="quantity" onchange="this.form.submit()" class="block w-20 py-1.5 pl-3 pr-8 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                                                <option th:each="i : ${#numbers.sequence(1, item.book.stockQuantity)}" th:value="${i}" th:text="${i}" th:selected="${i == item.quantity}"></option>
+                                            </select>
+                                        </form>
+                                        <div class="text-right">
+                                            <p class="text-sm text-gray-500">Subtotal</p>
+                                            <p class="text-lg font-bold text-gray-900" th:text="${'Rs. ' + #numbers.formatDecimal(item.book.price * item.quantity, 1, 2)}">Rs. 19.99</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="lg:w-1/3">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-24">
+                        <h2 class="text-lg font-bold text-gray-900 mb-6 border-b pb-4">Order Summary</h2>
+                        <div class="space-y-4 mb-6">
+                            <div class="flex justify-between text-gray-600">
+                                <span>Subtotal</span>
+                                <span class="font-medium text-gray-900" th:text="${'Rs. ' + #numbers.formatDecimal(total, 1, 2)}">Rs. 0.00</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>Shipping</span>
+                                <span class="font-medium text-green-600">Free</span>
+                            </div>
+                            <div class="border-t pt-4 flex justify-between">
+                                <span class="text-lg font-bold text-gray-900">Total</span>
+                                <span class="text-2xl font-extrabold text-primary" th:text="${'Rs. ' + #numbers.formatDecimal(total, 1, 2)}">Rs. 0.00</span>
+                            </div>
+                        </div>
+                        <a th:href="@{/checkout}" class="w-full block text-center bg-accent hover:bg-green-600 text-white font-bold py-3 px-4 rounded-md transition shadow-md">
+                            Proceed to Checkout <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </a>
+                        <div class="mt-4 text-center">
+                            <a th:href="@{/books}" class="text-sm font-medium text-primary hover:text-blue-800 transition">
+                                or Continue Shopping
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

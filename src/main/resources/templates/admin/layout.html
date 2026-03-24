@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Sidebar Fragment -->
+    <aside th:fragment="sidebar" class="w-64 bg-white border-r shadow-sm flex-shrink-0 hidden md:block z-10 min-h-screen sticky top-0">
+        <div class="p-6">
+            <h2 class="text-xl font-extrabold text-primary tracking-tight uppercase">Admin Panel</h2>
+        </div>
+        <nav class="mt-2 px-4 space-y-2">
+            <a th:href="@{/admin}" class="block px-4 py-3 rounded-md transition font-medium text-blue-600 hover:bg-blue-50">
+                <i class="fa-solid fa-gauge mr-3 w-5 text-center"></i> Dashboard
+            </a>
+            <a th:href="@{/admin/books}" class="block px-4 py-3 rounded-md transition font-medium text-gray-600 hover:bg-gray-100">
+                <i class="fa-solid fa-book mr-3 w-5 text-center"></i> Books
+            </a>
+            <a th:href="@{/admin/orders}" class="block px-4 py-3 rounded-md transition font-medium text-gray-600 hover:bg-gray-100">
+                <i class="fa-solid fa-cart-shopping mr-3 w-5 text-center"></i> Orders
+            </a>
+            <a th:href="@{/admin/users}" class="block px-4 py-3 rounded-md transition font-medium text-gray-600 hover:bg-gray-100">
+                <i class="fa-solid fa-users mr-3 w-5 text-center"></i> Users
+            </a>
+        </nav>
+    </aside>
+</body>
+</html>
