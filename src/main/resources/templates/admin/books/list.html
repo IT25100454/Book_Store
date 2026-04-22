@@ -1,89 +1,59 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Manage Books', content=~{::content})}">
 <body>
-    <div th:fragment="content" class="flex min-h-[calc(100vh-64px)] bg-gray-50">
+    <div th:fragment="content" class="flex min-h-[calc(100vh-76px)]">
         <aside th:replace="~{admin/layout :: sidebar}"></aside>
-        <main class="flex-1 w-full overflow-x-hidden p-8">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" data-aos="fade-up">
-            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-                <div class="flex items-center gap-3">
-                    <a th:href="@{/admin}" class="text-gray-400 hover:text-primary transition"><i class="fa-solid fa-arrow-left"></i></a>
-                    <h1 class="text-3xl font-extrabold text-gray-900">Manage Books</h1>
+        <main class="flex-1 overflow-x-hidden px-5 py-10 md:px-10 lg:px-14">
+            <div class="mx-auto max-w-7xl" data-aos="fade-up">
+                <div class="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+                    <div>
+                        <a th:href="@{/admin}" class="text-sm font-black uppercase tracking-[0.16em] text-[#716b61] transition hover:text-accent"><i class="fa-solid fa-arrow-left mr-2"></i>Dashboard</a>
+                        <h1 class="editorial-heading mt-5">Book inventory.</h1>
+                    </div>
+                    <a th:href="@{/admin/books/add}" class="editorial-button"><i class="fa-solid fa-plus"></i> Add book</a>
                 </div>
-                <a th:href="@{/admin/books/add}" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition shadow-sm inline-flex items-center gap-2">
-                    <i class="fa-solid fa-plus"></i> Add New Book
-                </a>
-            </div>
 
-            <div class="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                <div class="mt-10 overflow-x-auto">
+                    <table class="premium-table min-w-full">
+                        <thead>
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Book</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ISBN/Genre</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th class="text-left">Book</th>
+                                <th class="text-left">ISBN / Genre</th>
+                                <th class="text-left">Price</th>
+                                <th class="text-left">Stock</th>
+                                <th class="text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <tr th:each="book : ${books}" class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-10 w-8">
-                                            <img class="h-10 w-full object-cover rounded shadow-sm" th:src="${book.coverUrl}" alt="" onerror="this.src='/images/book-placeholder.png'">
-                                        </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-bold text-gray-900 truncate w-48 lg:w-64"><a th:href="@{/books/{id}(id=${book.id})}" th:text="${book.title}" class="hover:text-primary">Title</a></div>
-                                            <div class="text-sm text-gray-500 truncate w-48 lg:w-64" th:text="${book.author}">Author</div>
+                        <tbody>
+                            <tr th:each="book : ${books}">
+                                <td>
+                                    <div class="flex items-center gap-4">
+                                        <img class="h-20 w-14 object-cover shadow-lg" th:src="${book.coverUrl}" alt="" onerror="this.src='/images/book-placeholder.png'">
+                                        <div class="min-w-0">
+                                            <a th:href="@{/books/{id}(id=${book.id})}" th:text="${book.title}" class="block max-w-md truncate font-serif text-2xl font-black leading-none text-primary transition hover:text-accent">Title</a>
+                                            <p class="mt-2 truncate text-sm font-semibold text-[#716b61]" th:text="${book.author}">Author</p>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900" th:text="${book.isbn}">ISBN</div>
-                                    <div class="text-xs text-primary font-medium uppercase mt-1" th:text="${book.genre}">Genre</div>
+                                <td>
+                                    <p class="font-semibold text-primary" th:text="${book.isbn}">ISBN</p>
+                                    <p class="mt-2 text-xs font-black uppercase tracking-[0.16em] text-accent" th:text="${book.genre}">Genre</p>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold" th:text="${'Rs. ' + #numbers.formatDecimal(book.price, 1, 2)}">
-                                    Rs. 19.99
+                                <td class="font-black text-primary" th:text="${'Rs. ' + #numbers.formatDecimal(book.price, 1, 2)}">Rs. 19.99</td>
+                                <td>
+                                    <span th:class="${book.stockQuantity < 5 ? 'status-badge text-red-700' : 'status-badge text-green-700'}" th:text="${book.stockQuantity}">10</span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span th:class="${book.stockQuantity < 5 ? 'px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800' : 'px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'}" th:text="${book.stockQuantity}">
-                                        10
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <a th:href="@{/admin/books/edit/{id}(id=${book.id})}" class="text-blue-600 hover:text-blue-900 mr-3 px-2 py-1 bg-blue-50 rounded transition"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <a th:href="@{/admin/books/delete/{id}(id=${book.id})}" class="text-red-600 hover:text-red-900 px-2 py-1 bg-red-50 rounded transition" onclick="return confirm('Are you sure you want to delete this book?');"><i class="fa-solid fa-trash-can"></i></a>
+                                <td class="text-right">
+                                    <a th:href="@{/admin/books/edit/{id}(id=${book.id})}" class="mr-2 inline-flex h-10 w-10 items-center justify-center border border-black/10 text-primary transition hover:border-accent hover:text-accent"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a th:href="@{/admin/books/delete/{id}(id=${book.id})}" class="inline-flex h-10 w-10 items-center justify-center border border-red-200 text-red-700 transition hover:bg-red-700 hover:text-white" onclick="return confirm('Are you sure you want to delete this book?');"><i class="fa-solid fa-trash-can"></i></a>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
-        <script th:if="${success}">
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: '[[${success}]]',
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-            });
-        </script>
-        <script th:if="${error}">
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: '[[${error}]]',
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-            });
-        </script>
+            <script th:if="${success}">document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon:'success', title:'Success', text:'[[${success}]]', timer:3000, showConfirmButton:false}); });</script>
+            <script th:if="${error}">document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon:'error', title:'Error', text:'[[${error}]]', timer:3000, showConfirmButton:false}); });</script>
         </main>
     </div>
 </body>

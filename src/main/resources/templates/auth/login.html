@@ -1,63 +1,30 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Login', content=~{::content})}">
 <body>
-    <div th:fragment="content" class="min-h-[calc(100vh-140px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-xl border border-gray-100" data-aos="fade-up">
-            <div>
-                <div class="mx-auto h-12 w-12 bg-blue-100 text-primary rounded-full flex items-center justify-center">
-                    <i class="fa-solid fa-user-lock text-2xl"></i>
-                </div>
-                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                    Welcome Back
-                </h2>
-                <p class="mt-2 text-center text-sm text-gray-600">
-                    Or <a th:href="@{/register}" class="font-medium text-primary hover:text-blue-800 transition">create a new account</a>
-                </p>
-            </div>
-            
-            <div th:if="${param.error}" class="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <i class="fa-solid fa-circle-exclamation text-red-500"></i>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm text-red-700">Invalid username or password.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div th:if="${success}" class="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
-                <p class="text-sm text-green-700" th:text="${success}"></p>
-            </div>
+    <div th:fragment="content" class="editorial-shell grid min-h-[calc(100vh-76px)] items-center py-16 lg:grid-cols-[1fr_480px] lg:py-24">
+        <div class="hidden pr-12 lg:block" data-aos="fade-up">
+            <p class="section-kicker">Member access</p>
+            <h1 class="display-title mt-7">Return to the shelves.</h1>
+        </div>
+        <div class="glass-panel p-7 md:p-10" data-aos="fade-up" data-aos-delay="100">
+            <h2 class="font-serif text-5xl font-black text-primary">Sign in</h2>
+            <p class="mt-3 text-[#716b61]">New here? <a th:href="@{/register}" class="font-black text-accent">Create an account</a></p>
 
-            <div th:if="${param.accountDeleted}" class="bg-green-100 border-l-4 border-green-400 text-green-700 p-4 mb-4">
-                <p class="text-sm">Your account has been successfully deleted. We're sorry to see you go.</p>
-            </div>
-
-            <div th:if="${param.passwordChanged}" class="bg-green-100 border-l-4 border-green-400 text-green-700 p-4 mb-4">
-                <p class="text-sm">Password changed successfully. Please log in with your new password.</p>
-            </div>
+            <div th:if="${param.error}" class="mt-6 border-l-4 border-red-700 bg-red-50 p-4 text-sm font-semibold text-red-700">Invalid username or password.</div>
+            <div th:if="${success}" class="mt-6 border-l-4 border-green-700 bg-green-50 p-4 text-sm font-semibold text-green-700" th:text="${success}"></div>
+            <div th:if="${param.accountDeleted}" class="mt-6 border-l-4 border-green-700 bg-green-50 p-4 text-sm font-semibold text-green-700">Your account has been successfully deleted.</div>
+            <div th:if="${param.passwordChanged}" class="mt-6 border-l-4 border-green-700 bg-green-50 p-4 text-sm font-semibold text-green-700">Password changed successfully. Please log in with your new password.</div>
 
             <form class="mt-8 space-y-6" th:action="@{/login}" method="POST">
-                <div class="rounded-md shadow-sm space-y-4">
-                    <div>
-                        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                        <input id="username" name="username" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm mt-1" placeholder="Username">
-                    </div>
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                        <input id="password" name="password" type="password" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm mt-1" placeholder="Password">
-                    </div>
-                </div>
-
                 <div>
-                    <button type="submit" class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition shadow-md">
-                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                            <i class="fa-solid fa-arrow-right-to-bracket text-blue-300 group-hover:text-blue-200"></i>
-                        </span>
-                        Sign in
-                    </button>
+                    <label for="username" class="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-[#716b61]">Username</label>
+                    <input id="username" name="username" type="text" required class="premium-input w-full px-4" placeholder="Username">
                 </div>
+                <div>
+                    <label for="password" class="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-[#716b61]">Password</label>
+                    <input id="password" name="password" type="password" required class="premium-input w-full px-4" placeholder="Password">
+                </div>
+                <button type="submit" class="editorial-button w-full"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign in</button>
             </form>
         </div>
     </div>
