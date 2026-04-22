@@ -13,6 +13,7 @@ public class ThemeService {
             new ThemeOption("theme-modern-light", "Modern Light", "Clean commercial interface with soft depth and balanced spacing."),
             new ThemeOption("theme-minimal-editorial", "Minimal Editorial", "High-whitespace layout with larger typography and restrained surfaces."),
             new ThemeOption("theme-dark-premium", "Dark Premium", "Dark cinematic interface with warm accents and deeper component contrast.")
+            
     );
 
     public List<ThemeOption> getThemes() {
