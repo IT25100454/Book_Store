@@ -1,75 +1,71 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Browse Books', content=~{::content})}">
 <body>
-    <div th:fragment="content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4" data-aos="fade-up">
-            <h1 class="text-3xl font-extrabold text-gray-900">
-                <span th:if="${selectedGenre}" th:text="${selectedGenre} + ' Books'"></span>
-                <span th:if="${searchQuery}" th:text="'Search Results for: ' + ${searchQuery}"></span>
-                <span th:if="${selectedGenre == null and searchQuery == null}">All Books</span>
-            </h1>
-
-            <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                <form th:action="@{/books}" method="get" class="flex relative w-full sm:w-64">
-                    <input type="text" name="search" th:value="${searchQuery}" placeholder="Search titles or authors..." class="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
-                    <button type="submit" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-primary">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
-                </form>
-
-                <form th:action="@{/books}" method="get" class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-                    <input type="hidden" name="search" th:if="${searchQuery}" th:value="${searchQuery}">
-                    
-                    <select name="genre" onchange="this.form.submit()" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md shadow-sm">
+    <div th:fragment="content" class="editorial-shell py-16 lg:py-24">
+        <section class="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-end" data-aos="fade-up">
+            <div>
+                <p class="section-kicker">Catalog</p>
+                <h1 class="editorial-heading mt-6">
+                    <span th:if="${selectedGenre}" th:text="${selectedGenre}"></span>
+                    <span th:if="${searchQuery}" th:text="'Search: ' + ${searchQuery}"></span>
+                    <span th:if="${selectedGenre == null and searchQuery == null}">All books</span>
+                </h1>
+            </div>
+            <div class="glass-panel p-5">
+                <form th:action="@{/books}" method="get" class="grid gap-3 md:grid-cols-[1fr_auto_auto]">
+                    <div class="relative">
+                        <input type="text" name="search" th:value="${searchQuery}" placeholder="Search title or author" class="premium-input w-full pl-11 pr-4">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[#716b61]"></i>
+                    </div>
+                    <select name="genre" class="premium-input min-w-44" onchange="this.form.submit()">
                         <option value="">All Genres</option>
                         <option th:each="g : ${allGenres}" th:value="${g}" th:text="${g}" th:selected="${selectedGenre == g}"></option>
                     </select>
-
-                    <select name="sort" onchange="this.form.submit()" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md shadow-sm">
+                    <select name="sort" class="premium-input min-w-44" onchange="this.form.submit()">
                         <option value="">Sort By</option>
-                        <option value="newest" th:selected="${sort == 'newest'}">Newest Arrivals</option>
-                        <option value="price_asc" th:selected="${sort == 'price_asc'}">Price: Low to High</option>
-                        <option value="price_desc" th:selected="${sort == 'price_desc'}">Price: High to Low</option>
-                        <option value="title" th:selected="${sort == 'title'}">Title: A-Z</option>
+                        <option value="newest" th:selected="${sort == 'newest'}">Newest</option>
+                        <option value="price_asc" th:selected="${sort == 'price_asc'}">Price low to high</option>
+                        <option value="price_desc" th:selected="${sort == 'price_desc'}">Price high to low</option>
+                        <option value="title" th:selected="${sort == 'title'}">Title A-Z</option>
                     </select>
                 </form>
             </div>
+        </section>
+
+        <div th:if="${#lists.isEmpty(books)}" class="mt-16 border border-black/10 bg-paper p-16 text-center" data-aos="fade-up">
+            <i class="fa-solid fa-book-open-reader text-5xl text-accent"></i>
+            <h3 class="mt-8 font-serif text-5xl font-black text-primary">No matches found.</h3>
+            <p class="mx-auto mt-4 max-w-md leading-7 text-[#716b61]">Try another title, author, or genre. The shelves are wider than this search.</p>
+            <a th:href="@{/books}" class="editorial-button mt-8">Clear filters</a>
         </div>
 
-        <!-- Book Grid -->
-        <div th:if="${#lists.isEmpty(books)}" class="text-center py-20 bg-white rounded-xl shadow-sm border border-gray-100" data-aos="fade-up">
-            <i class="fa-solid fa-book-open-reader text-6xl text-gray-300 mb-4"></i>
-            <h3 class="text-xl font-medium text-gray-900">No books found</h3>
-            <p class="text-gray-500 mt-2 mb-6">Try adjusting your search or filter to find what you're looking for.</p>
-            <a th:href="@{/books}" class="text-primary hover:text-blue-800 font-medium bg-blue-50 px-6 py-2 rounded-full transition">Clear filters</a>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Book Card -->
-            <div th:each="book, iterStat : ${books}" class="bg-white rounded-xl shadow-md overflow-hidden book-card group flex flex-col h-[400px]" data-aos="fade-up" th:attr="data-aos-delay=${(iterStat.index % 4) * 50}">
-                <a th:href="@{/books/{id}(id=${book.id})}" class="block h-56 overflow-hidden relative border-b border-gray-100">
-                    <img th:src="${book.coverUrl}" alt="Book Cover" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='/images/book-placeholder.png'">
-                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition duration-300"></div>
-                </a>
-                <div class="p-4 flex flex-col flex-grow">
-                    <div class="text-[10px] font-semibold text-primary uppercase tracking-wider mb-1" th:text="${book.genre}">Genre</div>
-                    <h3 class="text-base font-bold text-gray-900 mb-1 line-clamp-2">
-                        <a th:href="@{/books/{id}(id=${book.id})}" class="hover:text-primary transition" th:text="${book.title}">Title</a>
-                    </h3>
-                    <p class="text-xs text-gray-600 mb-3 truncate flex-grow" th:text="${book.author}">Author</p>
-                    <div class="flex justify-between items-center mt-auto pt-2 border-t border-gray-50">
-                        <span class="text-lg font-bold text-gray-900" th:text="${'Rs. ' + #numbers.formatDecimal(book.price, 1, 2)}">Rs. 19.99</span>
-                        <form th:action="@{/cart/add}" method="post">
-                            <input type="hidden" name="bookId" th:value="${book.id}">
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="bg-gray-100 hover:bg-primary hover:text-white text-primary rounded-full w-8 h-8 flex items-center justify-center transition" title="Add to Cart" th:disabled="${book.stockQuantity <= 0}" th:classappend="${book.stockQuantity <= 0 ? 'opacity-50 cursor-not-allowed' : ''}">
-                                <i class="fa-solid fa-cart-plus text-sm"></i>
-                            </button>
-                        </form>
+        <section class="mt-20 lg:mt-24">
+            <div class="grid gap-x-12 gap-y-20 md:grid-cols-2 xl:grid-cols-3">
+                <article th:each="book, iterStat : ${books}" class="group grid gap-6 border-t border-black/10 pt-8 md:grid-cols-[170px_1fr]" data-aos="fade-up" th:attr="data-aos-delay=${(iterStat.index % 3) * 70}">
+                    <a th:href="@{/books/{id}(id=${book.id})}" class="block bg-[#dccbb2] p-4">
+                        <img th:src="${book.coverUrl}" alt="Book Cover" class="book-object aspect-[2/3] h-[255px] w-full object-cover" onerror="this.src='/images/book-placeholder.png'">
+                    </a>
+                    <div class="flex min-h-[255px] flex-col">
+                        <p class="text-xs font-black uppercase tracking-[0.18em] text-accent" th:text="${book.genre}">Genre</p>
+                        <h2 class="mt-4 font-serif text-3xl font-black leading-none text-primary">
+                            <a th:href="@{/books/{id}(id=${book.id})}" class="transition hover:text-accent" th:text="${book.title}">Title</a>
+                        </h2>
+                        <p class="mt-3 text-sm font-semibold text-[#716b61]" th:text="${book.author}">Author</p>
+                        <p class="mt-5 line-clamp-3 text-sm leading-6 text-[#5f584d]" th:text="${book.description}">Description</p>
+                        <div class="mt-auto flex items-center justify-between gap-4 pt-6">
+                            <span class="text-xl font-black text-primary" th:text="${'Rs. ' + #numbers.formatDecimal(book.price, 1, 2)}">Rs. 19.99</span>
+                            <form th:action="@{/cart/add}" method="post">
+                                <input type="hidden" name="bookId" th:value="${book.id}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="flex h-11 w-11 items-center justify-center border border-primary bg-primary text-white transition hover:border-accent hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40" title="Add to Cart" th:disabled="${book.stockQuantity <= 0}">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
+                </article>
             </div>
-        </div>
+        </section>
     </div>
 </body>
 </html>
