@@ -26,6 +26,11 @@ public class HomeController {
     public String index(Model model) {
         model.addAttribute("newArrivals", bookService.getNewArrivals());
         model.addAttribute("featuredBooks", bookService.getAllBooks().stream().limit(4).collect(Collectors.toList()));
+        model.addAttribute("allGenres", bookService.getAllBooks().stream()
+                .map(Book::getGenre)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList()));
         return "index";
     }
 
