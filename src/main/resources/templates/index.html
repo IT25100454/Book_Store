@@ -2,37 +2,67 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Home', content=~{::content})}">
 <body>
     <div th:fragment="content">
-        <section class="editorial-shell min-h-[calc(100vh-76px)] py-16 lg:py-24">
-            <div class="grid min-h-[74vh] items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
-                <div class="motion-fade-up">
-                    <p class="section-kicker">Indent bookstore</p>
-                    <h1 class="display-title mt-7 max-w-5xl">Read with presence.</h1>
-                    <p class="mt-8 max-w-xl text-lg leading-8 text-[#5f584d] md:text-xl">
-                        A curated bookstore for novels, ideas, craft, and beautiful objects made to stay on your shelf.
-                    </p>
-                    <div class="mt-10 flex flex-wrap gap-3">
-                        <a th:href="@{/books}" class="editorial-button">Browse catalog <i class="fa-solid fa-arrow-right"></i></a>
-                        <a th:href="@{/books(sort='newest')}" class="ghost-button editorial-button">New arrivals</a>
-                    </div>
-                </div>
+        <section class="scrollytelling-hero relative isolate flex min-h-[calc(100vh-76px)] items-center overflow-hidden bg-[#050505]">
+            <div class="scrollytelling-hero__mesh" aria-hidden="true"></div>
+            <div class="scrollytelling-hero__glow scrollytelling-hero__glow--left" aria-hidden="true"></div>
+            <div class="scrollytelling-hero__glow scrollytelling-hero__glow--right" aria-hidden="true"></div>
 
-                <div class="relative motion-fade-up motion-delay-1">
-                    <div class="absolute -left-6 top-10 hidden h-72 w-44 border border-black/10 lg:block"></div>
-                    <div class="relative mx-auto max-w-[480px]">
-                        <div th:each="book, iterStat : ${newArrivals}" th:if="${iterStat.index == 0}" class="group">
-                            <a th:href="@{/books/{id}(id=${book.id})}" class="block">
-                                <img th:src="${book.coverUrl}" alt="Featured book cover" class="book-object mx-auto aspect-[2/3] max-h-[640px] w-full max-w-[390px] object-cover" onerror="this.src='/images/book-placeholder.png'">
-                            </a>
-                            <div class="glass-panel absolute -bottom-8 right-0 max-w-[280px] p-5">
-                                <p class="text-xs font-black uppercase tracking-[0.18em] text-accent" th:text="${book.genre}">Genre</p>
-                                <h2 class="mt-2 font-serif text-3xl font-black leading-none text-primary" th:text="${book.title}">Featured Title</h2>
-                                <p class="mt-3 text-sm text-[#716b61]" th:text="${book.author}">Author</p>
+            <div class="editorial-shell relative z-10 w-full py-20 text-center lg:py-28">
+                <p class="scrollytelling-kicker justify-center">Immersive bookstore experience</p>
+                <h1 class="scrollytelling-hero__title mt-8">PageTurner</h1>
+                <p class="mx-auto mt-6 max-w-2xl text-base leading-8 text-[rgba(255,255,255,0.60)] md:text-lg">
+                    Scroll through an exploded book study built from a full image sequence and discover the catalog beneath it.
+                </p>
+                <div class="mt-14 inline-flex flex-col items-center gap-4 text-[rgba(255,255,255,0.90)]">
+                    <span class="text-xs font-semibold uppercase tracking-[0.34em]">Scroll to Explore</span>
+                    <span class="scrollytelling-arrow" aria-hidden="true">
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <section class="scrollytelling-sequence bg-[#050505]" aria-label="PageTurner book explosion sequence">
+            <div class="scrollytelling-sequence__track">
+                <div class="scrollytelling-sequence__sticky">
+                    <div class="scrollytelling-loader" data-scrollytelling-loader>
+                        <div class="scrollytelling-loader__inner">
+                            <p class="scrollytelling-kicker justify-center">Loading 240 frames</p>
+                            <p class="mt-5 text-3xl font-semibold tracking-[-0.04em] text-[rgba(255,255,255,0.90)]">Preparing the sequence</p>
+                            <p class="mt-3 text-sm uppercase tracking-[0.28em] text-[rgba(255,255,255,0.45)]" data-scrollytelling-progress-label>0%</p>
+                            <div class="scrollytelling-loader__bar">
+                                <span data-scrollytelling-progress-bar></span>
                             </div>
+                        </div>
+                    </div>
+
+                    <canvas class="scrollytelling-canvas" data-scrollytelling-canvas></canvas>
+
+                    <div class="scrollytelling-overlay-wrap pointer-events-none">
+                        <div class="scrollytelling-overlay is-active" data-overlay="intro">
+                            <p class="scrollytelling-kicker">Frame by frame</p>
+                            <h2>Your Next Chapter Awaits</h2>
+                            <p>The cover opens, the spine loosens, and the object becomes story in motion.</p>
+                        </div>
+                        <div class="scrollytelling-overlay" data-overlay="stories">
+                            <p class="scrollytelling-kicker">Built for discovery</p>
+                            <h2>Thousands of Stories</h2>
+                            <p>Watch the book unfold into materials, layers, and quiet detail as the page holds steady.</p>
+                        </div>
+                        <div class="scrollytelling-overlay" data-overlay="brand">
+                            <p class="scrollytelling-kicker">Return to the shelf</p>
+                            <h2>Find Your PageTurner</h2>
+                            <p>Scroll back upward and every part reassembles into a single object ready to be chosen.</p>
+                        </div>
+                        <div class="scrollytelling-cta" data-overlay="cta">
+                            <a href="/books" class="scrollytelling-cta__button">Browse Books <span aria-hidden="true">→</span></a>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <section class="scrollytelling-divider" aria-hidden="true"></section>
 
         <section class="border-y border-black/10 bg-primary text-white">
             <div class="editorial-shell grid gap-8 py-10 md:grid-cols-3">
@@ -104,7 +134,7 @@
                 <div class="mt-16 grid gap-10 lg:grid-cols-4">
                     <article th:each="book, iterStat : ${newArrivals}" th:if="${iterStat.index < 4}" class="group" data-aos="fade-up" th:attr="data-aos-delay=${iterStat.index * 90}">
                         <a th:href="@{/books/{id}(id=${book.id})}" class="book-stage block p-7">
-                            <img th:src="${book.coverUrl}" alt="Book Cover" class="book-object mx-auto aspect-[2/3] h-[390px] w-full max-w-[260px] object-cover" onerror="this.src='/images/book-placeholder.png'">
+                            <img th:src="${book.coverUrl}" alt="Book Cover" loading="lazy" class="book-object mx-auto aspect-[2/3] h-[390px] w-full max-w-[260px] object-cover" onerror="this.src='/images/book-placeholder.png'">
                         </a>
                         <div class="pt-7">
                             <p class="text-xs font-black uppercase tracking-[0.18em] text-accent" th:text="${book.genre}">Genre</p>
@@ -170,7 +200,7 @@
                 <div class="mt-16 space-y-14">
                     <article th:each="book, iterStat : ${featuredBooks}" th:if="${iterStat.index < 3}" class="group grid gap-8 border-t border-black/10 pt-10 lg:grid-cols-[320px_1fr_auto] lg:items-center" data-aos="fade-up" th:attr="data-aos-delay=${iterStat.index * 90}">
                         <a th:href="@{/books/{id}(id=${book.id})}" class="book-stage block p-6">
-                            <img th:src="${book.coverUrl}" alt="Curated book cover" class="book-object mx-auto aspect-[2/3] h-[430px] w-full max-w-[285px] object-cover" onerror="this.src='/images/book-placeholder.png'">
+                            <img th:src="${book.coverUrl}" alt="Curated book cover" loading="lazy" class="book-object mx-auto aspect-[2/3] h-[430px] w-full max-w-[285px] object-cover" onerror="this.src='/images/book-placeholder.png'">
                         </a>
                         <div>
                             <p class="text-xs font-black uppercase tracking-[0.18em] text-accent" th:text="${book.genre}">Genre</p>

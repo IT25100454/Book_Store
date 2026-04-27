@@ -29,10 +29,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/custom.css}">
+    <style th:if="${activeThemeCss != null and !#strings.isEmpty(activeThemeCss)}" th:inline="text">
+        body { [(${activeThemeCss})] }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body th:class="${(activeTheme != null ? activeTheme : 'theme-modern-light') + ' bg-background min-h-screen flex flex-col antialiased'}" th:attr="data-theme=${activeTheme != null ? activeTheme : 'theme-modern-light'}">
+<body th:class="${(activeTheme != null ? activeTheme : 'theme-modern-light') + ' ' + (activeTheme != null and #strings.startsWith(activeTheme, 'custom-') ? 'theme-custom ' : '') + 'bg-background min-h-screen flex flex-col antialiased'}" th:attr="data-theme=${activeTheme != null ? activeTheme : 'theme-modern-light'}">
 
     <nav th:fragment="navbar" class="sticky top-0 z-50 border-b border-black/10 bg-background/85 backdrop-blur-xl">
         <div class="editorial-shell">
@@ -108,14 +111,14 @@
         <div th:replace="${content}"></div>
     </main>
 
-    <footer class="mt-auto border-t border-black/10 bg-primary text-white">
+    <footer class="site-footer mt-auto border-t border-black/10 bg-primary text-white">
         <div class="editorial-shell py-12">
             <div class="grid gap-10 md:grid-cols-[1.2fr_0.8fr] md:items-end">
-                <div>
+                <div class="footer-copy">
                     <p class="section-kicker text-[#d4a373]">PageTurner</p>
                     <h2 class="mt-5 max-w-3xl font-serif text-4xl font-black leading-none md:text-6xl">Books chosen with the pace of a considered life.</h2>
                 </div>
-                <div class="flex flex-col gap-5 md:items-end">
+                <div class="footer-actions flex flex-col gap-5 md:items-end">
                     <div class="flex gap-3">
                         <a href="#" class="flex h-11 w-11 items-center justify-center border border-white/20 transition hover:bg-white hover:text-primary"><i class="fa-brands fa-facebook"></i></a>
                         <a href="#" class="flex h-11 w-11 items-center justify-center border border-white/20 transition hover:bg-white hover:text-primary"><i class="fa-brands fa-twitter"></i></a>
@@ -128,7 +131,10 @@
     </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/cinematic.js}"></script>
     <script>
         function refreshNotificationCount() {
             fetch('/notifications/count')
