@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title=${author.name}, content=~{::content})}">
+<body>
+    <div th:fragment="content">
+        <section class="editorial-shell py-12 lg:py-20">
+            <nav class="mb-12 text-sm font-bold uppercase tracking-[0.14em] text-[#716b61]" aria-label="Breadcrumb" data-aos="fade-in">
+                <a th:href="@{/}" class="transition hover:text-accent">Home</a>
+                <span class="mx-3">/</span>
+                <a th:href="@{/authors}" class="transition hover:text-accent">Authors</a>
+                <span class="mx-3">/</span>
+                <a th:href="@{/authors(nationality=${author.nationality})}" class="transition hover:text-accent" th:text="${author.nationality}">Nationality</a>
+            </nav>
+
+            <div class="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+                <div class="sticky top-28" data-aos="fade-up">
+                    <div class="bg-[#dccbb2] p-8 md:p-12">
+                        <img th:src="${author.photoUrl}" alt="Author Portrait" class="mx-auto aspect-square max-h-[520px] w-full max-w-[430px] rounded-full object-cover" onerror="this.src='/images/book-placeholder.png'">
+                    </div>
+                </div>
+
+                <div data-aos="fade-up" data-aos-delay="100">
+                    <p class="section-kicker" th:text="${author.nationality}">Nationality</p>
+                    <h1 class="mt-7 font-serif text-5xl font-black leading-none text-primary md:text-7xl xl:text-8xl" th:text="${author.name}">Name</h1>
+
+                    <div class="my-10 grid gap-4 border-y border-black/10 py-7 sm:grid-cols-2">
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-[0.18em] text-[#716b61]">Known books</p>
+                            <p class="mt-2 text-3xl font-black text-primary" th:text="${booksByAuthor.size()}">0</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-[0.18em] text-[#716b61]">Nationality</p>
+                            <span class="status-badge mt-3 text-primary" th:text="${author.nationality}">Nationality</span>
+                        </div>
+                    </div>
+
+                    <div class="max-w-3xl">
+                        <h2 class="font-serif text-4xl font-black text-primary">About the author</h2>
+                        <p class="mt-5 whitespace-pre-line break-words text-lg leading-9 text-[#5f584d]" th:text="${author.bio}">Bio text goes here...</p>
+                    </div>
+
+                    <div th:if="${!#lists.isEmpty(booksByAuthor)}" class="mt-12">
+                        <h3 class="font-serif text-3xl font-black text-primary">Books in store</h3>
+                        <div class="mt-6 grid gap-4">
+                            <a th:each="book : ${booksByAuthor}" th:href="@{/books/{id}(id=${book.id})}" class="glass-panel flex items-center justify-between gap-4 px-5 py-4 transition hover:border-accent hover:bg-[#f5efe5]">
+                                <span class="font-semibold text-primary" th:text="${book.title}">Book Title</span>
+                                <span class="text-sm font-black uppercase tracking-[0.16em] text-accent">View</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
