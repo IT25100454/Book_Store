@@ -47,6 +47,9 @@
                             </a>
                         </div>
                     </div>
+                    <div th:if="${#lists.isEmpty(booksByAuthor)}" class="glass-panel mt-12 p-6 text-[#5f584d]">
+                        No books from this author are available in the store yet.
+                    </div>
                 </div>
             </div>
         </section>
