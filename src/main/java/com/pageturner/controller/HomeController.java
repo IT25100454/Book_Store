@@ -134,7 +134,7 @@ public class HomeController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Author not found with ID: " + id);
         }
         model.addAttribute("author", author);
-        model.addAttribute("booksByAuthor", bookService.searchBooks(author.getName()));
+        model.addAttribute("booksByAuthor", bookService.getBooksByAuthor(author.getName()));
         return "authors/detail";
     }
 }
