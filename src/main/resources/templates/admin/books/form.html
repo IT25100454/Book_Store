@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title=${book.id == null ? 'Add Book' : 'Edit Book'}, content=~{::content})}">
+<body>
+    <div th:fragment="content" class="flex min-h-[calc(100vh-76px)]">
+        <aside th:replace="~{admin/layout :: sidebar}"></aside>
+        <main class="flex-1 overflow-x-hidden px-5 py-10 md:px-10 lg:px-14">
+            <div class="mx-auto max-w-5xl" data-aos="fade-up">
+                <a th:href="@{/admin/books}" class="text-sm font-black uppercase tracking-[0.16em] text-[#716b61] transition hover:text-accent"><i class="fa-solid fa-arrow-left mr-2"></i>Books</a>
+                <div class="mt-5 grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+                    <div>
+                        <p class="section-kicker">Inventory editor</p>
+                        <h1 class="editorial-heading mt-6" th:text="${book.id == null ? 'Add book.' : 'Edit book.'}">Book Form</h1>
+                        <p class="mt-6 text-lg leading-8 text-[#716b61]">Keep product data complete so every book can be presented as a premium object in the storefront.</p>
+                    </div>
+
+                    <form th:action="@{/admin/books/save}" method="post" th:object="${book}" class="glass-panel p-7">
+                        <input type="hidden" th:field="*{id}">
+                        <input type="hidden" th:field="*{createdAt}">
+
+                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <div class="md:col-span-2">
+                                <label class="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-[#716b61]">Title</label>
+                                <input type="text" th:field="*{title}" required class="premium-input w-full px-4">
+                            </div>
+                            <div>
+                                <label class="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-[#716b61]">Author</label>
+                                <input type="text" th:field="*{author}" required class="premium-input w-full px-4">
+                            </div>
+                            <div>
+                                <label class="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-[#716b61]">ISBN</label>
+                                <input type="text" th:field="*{isbn}" required class="premium-input w-full px-4">
+                            </div>
+                            <div>
+                                <label class="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-[#716b61]">Genre</label>
+                                <select th:field="*{genre}" class="premium-input w-full px-4">
+                                    <option value="Fiction">Fiction</option>
+                                    <option value="Non-Fiction">Non-Fiction</option>
+                                    <option value="Science">Science</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Children">Children</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-[#716b61]">Cover Image URL</label>
+                                <input type="url" th:field="*{coverUrl}" required class="premium-input w-full px-4">
+                            </div>
+                            <div>
+                                <label class="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-[#716b61]">Price (Rs.)</label>
+                                <input type="number" step="0.01" min="0" th:field="*{price}" required class="premium-input w-full px-4">
+                            </div>
+                            <div>
+                                <label class="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-[#716b61]">Stock Quantity</label>
+                                <input type="number" min="0" th:field="*{stockQuantity}" required class="premium-input w-full px-4">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-[#716b61]">Description</label>
+                                <textarea th:field="*{description}" rows="6" required class="premium-input w-full px-4 py-3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 flex flex-col gap-3 border-t border-black/10 pt-6 sm:flex-row sm:justify-end">
+                            <a th:href="@{/admin/books}" class="ghost-button editorial-button">Cancel</a>
+                            <button type="submit" class="editorial-button">Save book</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

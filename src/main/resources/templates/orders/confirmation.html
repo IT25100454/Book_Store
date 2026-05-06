@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Order Confirmation', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="editorial-shell flex min-h-[calc(100vh-76px)] items-center justify-center py-16">
+        <div class="glass-panel max-w-2xl p-8 text-center md:p-12" data-aos="fade-up">
+            <div class="mx-auto flex h-20 w-20 items-center justify-center border border-green-700 text-green-700">
+                <i class="fa-solid fa-check text-4xl"></i>
+            </div>
+            <p class="section-kicker mt-10 justify-center">Order placed</p>
+            <h1 class="mt-6 font-serif text-6xl font-black leading-none text-primary">Confirmed.</h1>
+            <p class="mx-auto mt-5 max-w-md leading-7 text-[#716b61]">Thank you for your purchase. Your order has been placed successfully.</p>
+            <div class="mt-9 border border-black/10 bg-paper p-5">
+                <p class="text-xs font-black uppercase tracking-[0.18em] text-[#716b61]">Order Number</p>
+                <p class="mt-2 text-2xl font-black tracking-[0.12em] text-primary" th:text="${orderNumber}">ABC12345</p>
+            </div>
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <a th:href="@{/profile}" class="editorial-button">View order details</a>
+                <a th:href="@{/books}" class="ghost-button editorial-button">Continue shopping</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

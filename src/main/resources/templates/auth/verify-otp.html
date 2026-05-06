@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Verify Email', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="editorial-shell flex min-h-[calc(100vh-76px)] items-center justify-center py-16">
+        <div class="glass-panel w-full max-w-lg p-7 text-center md:p-10" data-aos="fade-up">
+            <p class="section-kicker justify-center">Verification</p>
+            <h1 class="mt-6 font-serif text-6xl font-black leading-none text-primary">Check email.</h1>
+            <p class="mt-5 text-[#716b61]">We sent a 6-digit code to <span th:text="${email}" class="font-black text-primary"></span>.</p>
+
+            <div th:if="${error}" class="mt-6 border-l-4 border-red-700 bg-red-50 p-4 text-left text-sm font-semibold text-red-700" th:text="${error}"></div>
+            <div th:if="${success}" class="mt-6 border-l-4 border-green-700 bg-green-50 p-4 text-left text-sm font-semibold text-green-700" th:text="${success}"></div>
+
+            <form class="mt-8 space-y-6" th:action="@{/verify-otp}" method="POST">
+                <input type="hidden" name="email" th:value="${email}" />
+                <label for="otp" class="sr-only">Verification Code</label>
+                <input id="otp" name="otp" type="text" pattern="\d{6}" maxlength="6" required title="Please enter exactly 6 digits" placeholder="000000" class="premium-input w-full px-4 py-4 text-center text-3xl font-black tracking-[0.45em]">
+                <button type="submit" class="editorial-button w-full">Verify account</button>
+            </form>
+
+            <form th:action="@{/resend-otp}" method="POST" class="mt-6 text-center">
+                <input type="hidden" name="email" th:value="${email}" />
+                <p class="text-sm text-[#716b61]">
+                    Did not receive the code?
+                    <button type="submit" class="font-black text-accent transition hover:text-primary" data-allow-repeat="true">Resend OTP</button>
+                </p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

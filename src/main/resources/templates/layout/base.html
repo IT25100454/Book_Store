@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:fragment="html(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title != null ? title + ' | PageTurner' : 'PageTurner Bookstore'}">PageTurner Bookstore</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#171512',
+                        accent: '#9F6B3E',
+                        background: '#F6F1E8',
+                        paper: '#FBF8F1'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'Georgia', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/custom.css}">
+    <style th:if="${activeThemeCss != null and !#strings.isEmpty(activeThemeCss)}" th:inline="text">
+        body { [(${activeThemeCss})] }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body th:class="${(activeTheme != null ? activeTheme : 'theme-modern-light') + ' ' + (activeTheme != null and #strings.startsWith(activeTheme, 'custom-') ? 'theme-custom ' : '') + 'bg-background min-h-screen flex flex-col antialiased'}" th:attr="data-theme=${activeTheme != null ? activeTheme : 'theme-modern-light'}">
+
+    <nav th:fragment="navbar" class="sticky top-0 z-50 border-b border-black/10 bg-background/85 backdrop-blur-xl">
+        <div class="editorial-shell">
+            <div class="flex min-h-[76px] items-center justify-between gap-5">
+                <a th:href="@{/}" class="group flex items-center gap-3">
+                    <span class="flex h-11 w-11 items-center justify-center border border-black/20 bg-primary text-white transition group-hover:bg-accent">
+                        <i class="fa-solid fa-book-open"></i>
+                    </span>
+                    <span class="font-serif text-2xl font-black tracking-tight text-primary">PageTurner</span>
+                </a>
+
+                <div class="hidden items-center gap-9 md:flex">
+                    <a th:href="@{/}" th:classappend="${title == 'Home' ? 'text-accent' : 'text-primary'}" class="nav-link text-sm font-bold uppercase tracking-[0.16em]">Home</a>
+                    <a th:href="@{/books}" th:classappend="${title == 'Browse Books' ? 'text-accent' : 'text-primary'}" class="nav-link text-sm font-bold uppercase tracking-[0.16em]">Catalog</a>
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <div sec:authorize="isAuthenticated()" class="relative">
+                        <a th:href="@{/notifications}" class="relative inline-flex h-11 w-11 items-center justify-center border border-black/10 bg-paper text-primary transition hover:border-accent hover:text-accent" title="Notifications">
+                            <i class="fa-solid fa-bell"></i>
+                            <span th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}"
+                                  id="notif-badge"
+                                  th:text="${unreadNotificationCount}"
+                                  class="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-black text-white">
+                            </span>
+                        </a>
+                    </div>
+
+                    <a th:href="@{/cart}" class="inline-flex h-11 w-11 items-center justify-center border border-black/10 bg-paper text-primary transition hover:border-accent hover:text-accent" title="Cart">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </a>
+
+                    <div sec:authorize="!isAuthenticated()" class="hidden items-center gap-2 sm:flex">
+                        <a th:href="@{/login}" class="ghost-button editorial-button min-h-0 px-4 py-2 text-sm">Login</a>
+                        <a th:href="@{/register}" class="editorial-button min-h-0 px-4 py-2 text-sm">Join</a>
+                    </div>
+
+                    <div sec:authorize="isAuthenticated()" class="flex items-center gap-3">
+                        <span sec:authorize="hasRole('ADMIN')" class="hidden sm:inline-flex">
+                            <a th:href="@{/admin}" class="text-sm font-black uppercase tracking-[0.14em] text-accent transition hover:text-primary">Admin</a>
+                        </span>
+
+                        <div class="relative group">
+                            <button class="flex h-11 items-center gap-2 border border-black/10 bg-paper px-3 text-sm font-bold text-primary transition hover:border-accent">
+                                <i class="fas fa-user-circle"></i>
+                                <span class="hidden max-w-[140px] truncate sm:inline" th:text="${#authentication.name}">user@email.com</span>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+
+                            <div class="absolute right-0 top-full hidden min-w-56 pt-3 group-hover:block">
+                                <div class="glass-panel overflow-hidden">
+                                    <a th:href="@{/profile}" class="flex items-center gap-3 px-5 py-4 text-sm font-bold text-primary transition hover:bg-black/5">
+                                        <i class="fas fa-user w-4"></i> My Profile
+                                    </a>
+                                    <a th:href="@{/profile}" class="flex items-center gap-3 px-5 py-4 text-sm font-bold text-primary transition hover:bg-black/5">
+                                        <i class="fas fa-box w-4"></i> My Orders
+                                    </a>
+                                    <form th:action="@{/logout}" method="post" class="border-t border-black/10">
+                                        <button type="submit" class="flex w-full items-center gap-3 px-5 py-4 text-left text-sm font-bold text-red-700 transition hover:bg-red-50">
+                                            <i class="fas fa-sign-out-alt w-4"></i> Logout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        <div th:replace="${content}"></div>
+    </main>
+
+    <footer class="site-footer mt-auto border-t border-black/10 bg-primary text-white">
+        <div class="editorial-shell py-12">
+            <div class="grid gap-10 md:grid-cols-[1.2fr_0.8fr] md:items-end">
+                <div class="footer-copy">
+                    <p class="section-kicker text-[#d4a373]">PageTurner</p>
+                    <h2 class="mt-5 max-w-3xl font-serif text-4xl font-black leading-none md:text-6xl">Books chosen with the pace of a considered life.</h2>
+                </div>
+                <div class="footer-actions flex flex-col gap-5 md:items-end">
+                    <div class="flex gap-3">
+                        <a href="#" class="flex h-11 w-11 items-center justify-center border border-white/20 transition hover:bg-white hover:text-primary"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="flex h-11 w-11 items-center justify-center border border-white/20 transition hover:bg-white hover:text-primary"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="https://www.instagram.com/__dilrukshan/" class="flex h-11 w-11 items-center justify-center border border-white/20 transition hover:bg-white hover:text-primary"><i class="fa-brands fa-instagram"></i></a>
+                    </div>
+                    <p class="text-sm text-white/60">&copy; 2026 PageTurner Bookstore. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/cinematic.js}"></script>
+    <script>
+        function refreshNotificationCount() {
+            fetch('/notifications/count')
+                .then(r => r.ok ? r.json() : null)
+                .then(count => {
+                    const badge = document.getElementById('notif-badge');
+                    if (badge) {
+                        if (count > 0) {
+                            badge.textContent = count;
+                            badge.classList.remove('hidden');
+                        } else {
+                            badge.classList.add('hidden');
+                        }
+                    }
+                })
+                .catch(err => console.error('Failed to fetch notifications', err));
+        }
+        if (document.getElementById('notif-badge')) {
+            setInterval(refreshNotificationCount, 30000);
+        }
+    </script>
+</body>
+</html>

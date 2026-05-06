@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Internal Error', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="editorial-shell flex min-h-[calc(100vh-76px)] items-center justify-center py-16">
+        <div class="glass-panel max-w-2xl p-8 text-center md:p-12" data-aos="fade-up">
+            <i class="fa-solid fa-triangle-exclamation text-5xl text-accent"></i>
+            <p class="section-kicker mt-10 justify-center">500</p>
+            <h1 class="mt-6 font-serif text-6xl font-black leading-none text-primary">Something failed.</h1>
+            <p class="mx-auto mt-5 max-w-md leading-7 text-[#716b61]">Something went wrong on our end. Please try again later.</p>
+            <p th:if="${error}" class="mt-4 text-sm font-semibold text-[#716b61]" th:text="'Details: ' + ${error}"></p>
+            <a th:href="@{/}" class="editorial-button mt-8"><i class="fa-solid fa-house"></i> Back home</a>
+        </div>
+    </div>
+</body>
+</html>
