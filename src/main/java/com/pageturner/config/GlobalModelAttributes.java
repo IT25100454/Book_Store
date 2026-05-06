@@ -4,7 +4,6 @@ import com.pageturner.model.User;
 import com.pageturner.service.NotificationService;
 import com.pageturner.service.ThemeService;
 import com.pageturner.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,10 +23,11 @@ public class GlobalModelAttributes {
     }
 
     @ModelAttribute
-    public void addGlobalAttributes(Authentication auth, Model model, HttpSession session) {
-        Object sessionTheme = session.getAttribute("activeTheme");
-        String activeTheme = themeService.normalizeTheme(sessionTheme instanceof String ? (String) sessionTheme : null);
-        model.addAttribute("activeTheme", activeTheme);
+    public void addGlobalAttributes(Authentication auth, Model model) {
+        var activeThemeOption = themeService.getActiveTheme();
+        model.addAttribute("activeTheme", activeThemeOption.id());
+        model.addAttribute("activeThemeOption", activeThemeOption);
+        model.addAttribute("activeThemeCss", themeService.toCssVariables(activeThemeOption.settings() != null ? activeThemeOption.settings() : themeService.defaultSettings()));
         model.addAttribute("availableThemes", themeService.getThemes());
 
         if (auth != null && auth.isAuthenticated()) {
