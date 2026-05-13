@@ -115,6 +115,54 @@ public class AdminController {
         return "redirect:/admin/books";
     }
 
+    // --- Author Management ---
+
+    @GetMapping("/authors")
+    public String listAuthors(Model model, RedirectAttributes redirectAttributes) {
+        try {
+            model.addAttribute("authors", authorService.getAllAuthors());
+            return "admin/authors/list";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Could not load authors: " + e.getMessage());
+            return "redirect:/admin";
+        }
+    }
+
+    @GetMapping("/authors/add")
+    public String showAddAuthorForm(Model model) {
+        model.addAttribute("author", new Author());
+        return "admin/authors/form";
+    }
+
+    @PostMapping("/authors/save")
+    public String saveAuthor(@ModelAttribute Author author, RedirectAttributes redirectAttributes) {
+        authorService.saveAuthor(author);
+        redirectAttributes.addFlashAttribute("success", "Author saved successfully.");
+        return "redirect:/admin/authors";
+    }
+
+    @GetMapping("/authors/edit/{id}")
+    public String showEditAuthorForm(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            model.addAttribute("author", authorService.getAuthorById(id));
+            return "admin/authors/form";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Could not load author: " + e.getMessage());
+            return "redirect:/admin/authors";
+        }
+    }
+
+    @GetMapping("/authors/delete/{id}")
+    public String deleteAuthor(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            authorService.deleteAuthor(id);
+            redirectAttributes.addFlashAttribute("success", "Author deleted successfully.");
+        } catch(Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Cannot delete author.");
+        }
+        return "redirect:/admin/authors";
+    }
+
     // --- Order Management ---
 
     @GetMapping("/orders")
