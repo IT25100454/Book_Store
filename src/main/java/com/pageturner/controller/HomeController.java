@@ -1,6 +1,5 @@
 package com.pageturner.controller;
 
-import com.pageturner.model.Book;
 import com.pageturner.service.BookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -1,6 +1,5 @@
 package com.pageturner.component;
 
-import com.pageturner.model.Book;
 import com.pageturner.model.User;
 import com.pageturner.repository.BookRepository;
 import com.pageturner.service.UserService;

@@ -1,8 +1,6 @@
 package com.pageturner.service.impl;
 
-import com.pageturner.model.Book;
 import com.pageturner.model.Notification;
-import com.pageturner.model.Order;
 import com.pageturner.model.User;
 import com.pageturner.repository.NotificationRepository;
 import com.pageturner.service.EmailNotificationService;
