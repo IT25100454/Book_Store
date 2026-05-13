@@ -55,8 +55,11 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login?logout=true")
                 .permitAll()
             )
-            .csrf(csrf -> csrf.disable());
-        
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests((requests) -> requests
+                            .requestMatchers("/favicon.ico").permitAll() // Allow the request
+                    // ... your other config
+            );
         return http.build();
     }
 }
