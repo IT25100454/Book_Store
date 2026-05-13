@@ -1,11 +1,10 @@
 package com.pageturner.controller;
 
+import com.pageturner.model.Author;
+import com.pageturner.model.Book;
+import com.pageturner.model.Order;
 import com.pageturner.model.User;
-import com.pageturner.service.BookService;
-import com.pageturner.service.OrderService;
-import com.pageturner.service.ReportService;
-import com.pageturner.service.UserService;
-import com.pageturner.service.NotificationService;
+import com.pageturner.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,13 +27,15 @@ public class AdminController {
     private final UserService userService;
     private final ReportService reportService;
     private final NotificationService notificationService;
+    private final AuthorService authorService;
 
-    public AdminController(BookService bookService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService) {
+    public AdminController(BookService bookService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService, AuthorService authorService) {
         this.bookService = bookService;
         this.orderService = orderService;
         this.userService = userService;
         this.reportService = reportService;
         this.notificationService = notificationService;
+        this.authorService = authorService;
     }
 
     @GetMapping

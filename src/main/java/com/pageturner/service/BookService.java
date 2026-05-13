@@ -1,5 +1,7 @@
 package com.pageturner.service;
 
+import com.pageturner.model.Book;
+
 import java.util.List;
 
 public interface BookService {
@@ -11,4 +13,5 @@ public interface BookService {
     List<Book> searchBooks(String query);
     List<Book> getNewArrivals();
     long getTotalBooksCount();
+    List<Book> getBooksByAuthor(String authorName);
 }

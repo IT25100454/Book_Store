@@ -1,5 +1,6 @@
 package com.pageturner.service.impl;
 
+import com.pageturner.model.Book;
 import com.pageturner.repository.BookRepository;
 import com.pageturner.service.ReportService;
 import org.springframework.stereotype.Service;

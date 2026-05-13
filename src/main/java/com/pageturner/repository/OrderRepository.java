@@ -1,5 +1,6 @@
 package com.pageturner.repository;
 
+import com.pageturner.model.Order;
 import com.pageturner.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;

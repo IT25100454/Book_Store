@@ -1,5 +1,6 @@
 package com.pageturner.service;
 
+import com.pageturner.model.Order;
 import com.pageturner.model.User;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
