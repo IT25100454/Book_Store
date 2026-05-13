@@ -10,7 +10,8 @@ import java.util.List;
 @Table(name = "orders")
 public class Order extends BaseEntity {
 
-    
+    @Column(unique = true, nullable = false)
+    private String orderNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
