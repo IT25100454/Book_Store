@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Home', content=~{::content})}">
+<body>
+    <div th:fragment="content">
+        <section class="scrollytelling-hero relative isolate flex min-h-[calc(100vh-76px)] items-center overflow-hidden bg-[#050505]">
+            <div class="scrollytelling-hero__mesh" aria-hidden="true"></div>
+            <div class="scrollytelling-hero__glow scrollytelling-hero__glow--left" aria-hidden="true"></div>
+            <div class="scrollytelling-hero__glow scrollytelling-hero__glow--right" aria-hidden="true"></div>
+
+            <div class="editorial-shell relative z-10 w-full py-20 text-center lg:py-28">
+                <p class="scrollytelling-kicker justify-center">Immersive bookstore experience</p>
+                <h1 class="scrollytelling-hero__title mt-8">PageTurner</h1>
+                <p class="mx-auto mt-6 max-w-2xl text-base leading-8 text-[rgba(255,255,255,0.60)] md:text-lg">
+                    Scroll through an exploded book study built from a full image sequence and discover the catalog beneath it.
+                </p>
+                <div class="mt-14 inline-flex flex-col items-center gap-4 text-[rgba(255,255,255,0.90)]">
+                    <span class="text-xs font-semibold uppercase tracking-[0.34em]">Scroll to Explore</span>
+                    <span class="scrollytelling-arrow" aria-hidden="true">
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <section class="scrollytelling-sequence bg-[#050505]" aria-label="PageTurner book explosion sequence">
+            <div class="scrollytelling-sequence__track">
+                <div class="scrollytelling-sequence__sticky">
+                    <div class="scrollytelling-loader" data-scrollytelling-loader>
+                        <div class="scrollytelling-loader__inner">
+                            <p class="scrollytelling-kicker justify-center">Loading 240 frames</p>
+                            <p class="mt-5 text-3xl font-semibold tracking-[-0.04em] text-[rgba(255,255,255,0.90)]">Preparing the sequence</p>
+                            <p class="mt-3 text-sm uppercase tracking-[0.28em] text-[rgba(255,255,255,0.45)]" data-scrollytelling-progress-label>0%</p>
+                            <div class="scrollytelling-loader__bar">
+                                <span data-scrollytelling-progress-bar></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <canvas class="scrollytelling-canvas" data-scrollytelling-canvas></canvas>
+
+                    <div class="scrollytelling-overlay-wrap pointer-events-none">
+                        <div class="scrollytelling-overlay is-active" data-overlay="intro">
+                            <p class="scrollytelling-kicker">Frame by frame</p>
+                            <h2>Your Next Chapter Awaits</h2>
+                            <p>The cover opens, the spine loosens, and the object becomes story in motion.</p>
+                        </div>
+                        <div class="scrollytelling-overlay" data-overlay="stories">
+                            <p class="scrollytelling-kicker">Built for discovery</p>
+                            <h2>Thousands of Stories</h2>
+                            <p>Watch the book unfold into materials, layers, and quiet detail as the page holds steady.</p>
+                        </div>
+                        <div class="scrollytelling-overlay" data-overlay="brand">
+                            <p class="scrollytelling-kicker">Return to the shelf</p>
+                            <h2>Find Your PageTurner</h2>
+                            <p>Scroll back upward and every part reassembles into a single object ready to be chosen.</p>
+                        </div>
+                        <div class="scrollytelling-cta" data-overlay="cta">
+                            <a href="/books" class="scrollytelling-cta__button">Browse Books <span aria-hidden="true">→</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="scrollytelling-divider" aria-hidden="true"></section>
+
+        <section class="border-y border-black/10 bg-primary text-white">
+            <div class="editorial-shell grid gap-8 py-10 md:grid-cols-3">
+                <div class="motion-fade-up">
+                    <p class="text-4xl font-serif font-black">01</p>
+                    <p class="mt-2 text-sm uppercase tracking-[0.18em] text-white/55">Curated shelves</p>
+                </div>
+                <div class="motion-fade-up motion-delay-1">
+                    <p class="text-4xl font-serif font-black">24h</p>
+                    <p class="mt-2 text-sm uppercase tracking-[0.18em] text-white/55">Quiet discovery</p>
+                </div>
+                <div class="motion-fade-up motion-delay-2">
+                    <p class="text-4xl font-serif font-black">Rs.</p>
+                    <p class="mt-2 text-sm uppercase tracking-[0.18em] text-white/55">Transparent pricing</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="editorial-shell py-24 lg:py-32">
+            <div class="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+                <div data-aos="fade-up">
+                    <p class="section-kicker">Editorial collections</p>
+                    <h2 class="editorial-heading mt-6">Shelves with a point of view.</h2>
+                </div>
+                <p class="max-w-2xl text-lg leading-8 text-[#5f584d]" data-aos="fade-up" data-aos-delay="100">
+                    Browse by mood, discipline, and pace. PageTurner keeps discovery calm by giving every section room to breathe.
+                </p>
+            </div>
+
+            <div class="mt-16 grid gap-px overflow-hidden border border-black/10 bg-black/10 md:grid-cols-5">
+                <a th:href="@{/books(genre='Fiction')}" class="editorial-card group min-h-56 p-8">
+                    <i class="fa-solid fa-masks-theater text-2xl text-accent"></i>
+                    <h3 class="mt-14 font-serif text-3xl font-black text-primary">Fiction</h3>
+                    <p class="mt-3 text-sm leading-6 text-[#716b61]">Worlds, voices, and literary atmosphere.</p>
+                </a>
+                <a th:href="@{/books(genre='Non-Fiction')}" class="editorial-card group min-h-56 p-8">
+                    <i class="fa-solid fa-scale-balanced text-2xl text-accent"></i>
+                    <h3 class="mt-14 font-serif text-3xl font-black text-primary">Ideas</h3>
+                    <p class="mt-3 text-sm leading-6 text-[#716b61]">Arguments, memoir, culture, and clarity.</p>
+                </a>
+                <a th:href="@{/books(genre='Science')}" class="editorial-card group min-h-56 p-8">
+                    <i class="fa-solid fa-atom text-2xl text-accent"></i>
+                    <h3 class="mt-14 font-serif text-3xl font-black text-primary">Science</h3>
+                    <p class="mt-3 text-sm leading-6 text-[#716b61]">Elegant explanations for complex systems.</p>
+                </a>
+                <a th:href="@{/books(genre='Technology')}" class="editorial-card group min-h-56 p-8">
+                    <i class="fa-solid fa-laptop-code text-2xl text-accent"></i>
+                    <h3 class="mt-14 font-serif text-3xl font-black text-primary">Tech</h3>
+                    <p class="mt-3 text-sm leading-6 text-[#716b61]">Tools, craft, software, and future thinking.</p>
+                </a>
+                <a th:href="@{/books(genre='Children')}" class="editorial-card group min-h-56 p-8">
+                    <i class="fa-solid fa-child-reaching text-2xl text-accent"></i>
+                    <h3 class="mt-14 font-serif text-3xl font-black text-primary">Young</h3>
+                    <p class="mt-3 text-sm leading-6 text-[#716b61]">Bright stories for early readers.</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="editorial-band py-24 lg:py-32">
+            <div class="editorial-shell">
+                <div class="flex flex-col justify-between gap-8 md:flex-row md:items-end" data-aos="fade-up">
+                    <div>
+                        <p class="section-kicker">New arrivals</p>
+                        <h2 class="editorial-heading mt-6">Fresh on the table.</h2>
+                    </div>
+                    <a th:href="@{/books(sort='newest')}" class="premium-link">View all <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+
+                <div class="mt-16 grid gap-10 lg:grid-cols-4">
+                    <article th:each="book, iterStat : ${newArrivals}" th:if="${iterStat.index < 4}" class="group" data-aos="fade-up" th:attr="data-aos-delay=${iterStat.index * 90}">
+                        <a th:href="@{/books/{id}(id=${book.id})}" class="book-stage block p-7">
+                            <img th:src="${book.coverUrl}" alt="Book Cover" loading="lazy" class="book-object mx-auto aspect-[2/3] h-[390px] w-full max-w-[260px] object-cover" onerror="this.src='/images/book-placeholder.png'">
+                        </a>
+                        <div class="pt-7">
+                            <p class="text-xs font-black uppercase tracking-[0.18em] text-accent" th:text="${book.genre}">Genre</p>
+                            <h3 class="mt-3 min-h-16 font-serif text-3xl font-black leading-none text-primary">
+                                <a th:href="@{/books/{id}(id=${book.id})}" class="transition hover:text-accent" th:text="${book.title}">Book Title</a>
+                            </h3>
+                            <p class="mt-3 text-sm font-semibold text-[#716b61]" th:text="${book.author}">Author Name</p>
+                            <div class="mt-6 flex items-center justify-between gap-4 border-t border-black/10 pt-5">
+                                <span class="text-xl font-black text-primary" th:text="${'Rs. ' + #numbers.formatDecimal(book.price, 1, 2)}">Rs. 19.99</span>
+                                <form th:action="@{/cart/add}" method="post">
+                                    <input type="hidden" name="bookId" th:value="${book.id}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="flex h-11 w-11 items-center justify-center border border-primary bg-primary text-white transition hover:bg-accent hover:border-accent disabled:cursor-not-allowed disabled:opacity-40" title="Add to Cart" th:disabled="${book.stockQuantity <= 0}">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="editorial-shell grid gap-12 py-24 lg:grid-cols-[1fr_1.2fr] lg:py-32">
+            <div data-aos="fade-up">
+                <p class="section-kicker">Reading culture</p>
+                <h2 class="editorial-heading mt-6">Less scrolling. More attention.</h2>
+            </div>
+            <div class="grid gap-6 md:grid-cols-2">
+                <div class="editorial-card p-8" data-aos="fade-up">
+                    <h3 class="font-serif text-3xl font-black text-primary">Weekend stack</h3>
+                    <p class="mt-4 leading-7 text-[#5f584d]">Build a small pile across fiction, science, and essay collections for slower reading.</p>
+                </div>
+                <div class="editorial-card p-8" data-aos="fade-up" data-aos-delay="100">
+                    <h3 class="font-serif text-3xl font-black text-primary">One author, deeply</h3>
+                    <p class="mt-4 leading-7 text-[#5f584d]">Follow a writer across genres and editions with a catalog that keeps discovery visible.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="editorial-shell border-t border-black/10 py-24 lg:py-36">
+            <div class="mx-auto max-w-5xl text-center" data-aos="fade-up">
+                <p class="section-kicker justify-center">Why reading matters</p>
+                <h2 class="editorial-heading mt-6">A quiet technology for attention.</h2>
+                <p class="mx-auto mt-8 max-w-3xl text-xl leading-9 text-[#5f584d]">
+                    Reading gives thought a slower room. It builds memory, empathy, language, and patience without demanding spectacle. A good shelf is not only entertainment; it is a private archive of how a person chooses to look at the world.
+                </p>
+            </div>
+        </section>
+
+        <section class="editorial-band py-24 lg:py-32">
+            <div class="editorial-shell">
+                <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end" data-aos="fade-up">
+                    <div>
+                        <p class="section-kicker">Staff picks</p>
+                        <h2 class="editorial-heading mt-6">Curated reads with shelf presence.</h2>
+                    </div>
+                    <p class="max-w-2xl text-lg leading-8 text-[#5f584d]">
+                        A focused selection from the live catalog, presented as larger editorial objects instead of compact product cards.
+                    </p>
+                </div>
+
+                <div class="mt-16 space-y-14">
+                    <article th:each="book, iterStat : ${featuredBooks}" th:if="${iterStat.index < 3}" class="group grid gap-8 border-t border-black/10 pt-10 lg:grid-cols-[320px_1fr_auto] lg:items-center" data-aos="fade-up" th:attr="data-aos-delay=${iterStat.index * 90}">
+                        <a th:href="@{/books/{id}(id=${book.id})}" class="book-stage block p-6">
+                            <img th:src="${book.coverUrl}" alt="Curated book cover" loading="lazy" class="book-object mx-auto aspect-[2/3] h-[430px] w-full max-w-[285px] object-cover" onerror="this.src='/images/book-placeholder.png'">
+                        </a>
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-[0.18em] text-accent" th:text="${book.genre}">Genre</p>
+                            <h3 class="mt-4 font-serif text-5xl font-black leading-none text-primary" th:text="${book.title}">Book Title</h3>
+                            <p class="mt-4 text-lg font-semibold text-[#716b61]" th:text="${book.author}">Author</p>
+                            <p class="mt-6 max-w-2xl text-base leading-8 text-[#5f584d]" th:text="${book.description}">Description</p>
+                        </div>
+                        <div class="lg:text-right">
+                            <p class="text-3xl font-black text-primary" th:text="${'Rs. ' + #numbers.formatDecimal(book.price, 1, 2)}">Rs. 19.99</p>
+                            <a th:href="@{/books/{id}(id=${book.id})}" class="ghost-button editorial-button mt-6">View book</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="editorial-shell py-24 lg:py-36">
+            <div class="grid gap-14 lg:grid-cols-[0.9fr_1.1fr]">
+                <div data-aos="fade-up">
+                    <p class="section-kicker">Reading culture</p>
+                    <h2 class="editorial-heading mt-6">Habits, collecting, and a life with books.</h2>
+                </div>
+                <div class="space-y-10 text-lg leading-9 text-[#5f584d]" data-aos="fade-up" data-aos-delay="100">
+                    <article>
+                        <h3 class="font-serif text-4xl font-black leading-none text-primary">Reading habits</h3>
+                        <p class="mt-4">A lasting habit usually begins small: a chapter before the day accelerates, a page after dinner, a pencil beside the bed. The best routine is the one that makes attention easy to repeat.</p>
+                    </article>
+                    <article>
+                        <h3 class="font-serif text-4xl font-black leading-none text-primary">Benefits of reading</h3>
+                        <p class="mt-4">Books sharpen language, train focus, and create emotional range. They make complicated lives legible by letting us rehearse other minds, other histories, and other futures.</p>
+                    </article>
+                    <article>
+                        <h3 class="font-serif text-4xl font-black leading-none text-primary">Book collecting</h3>
+                        <p class="mt-4">A collection is a portrait built slowly. Keep the books that changed your pace, the editions you return to, and the volumes that make a room feel intellectually alive.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="border-y border-black/10 bg-primary py-24 text-white lg:py-32">
+            <div class="editorial-shell">
+                <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+                    <div data-aos="fade-up">
+                        <p class="section-kicker text-[#d4a373]">Discovery</p>
+                        <h2 class="mt-6 font-serif text-5xl font-black leading-none md:text-7xl">Find the next shelf.</h2>
+                    </div>
+                    <div class="grid gap-px overflow-hidden border border-white/15 bg-white/15 sm:grid-cols-2" data-aos="fade-up" data-aos-delay="100">
+                        <a th:each="genre : ${allGenres}" th:href="@{/books(genre=${genre})}" class="group min-h-36 bg-primary p-7 transition hover:bg-white hover:text-primary">
+                            <span class="text-xs font-black uppercase tracking-[0.18em] text-white/50 transition group-hover:text-primary/50">Genre</span>
+                            <span class="mt-7 block font-serif text-4xl font-black leading-none" th:text="${genre}">Genre</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="editorial-shell py-24 lg:py-36">
+            <blockquote class="mx-auto max-w-6xl text-center" data-aos="fade-up">
+                <p class="font-serif text-5xl font-black leading-none text-primary md:text-7xl lg:text-8xl">“A reader lives a thousand lives before he dies.”</p>
+                <footer class="mt-8 text-sm font-black uppercase tracking-[0.18em] text-accent">George R. R. Martin</footer>
+            </blockquote>
+        </section>
+
+        <section class="editorial-band py-20">
+            <div class="editorial-shell grid gap-10 md:grid-cols-[1fr_1.3fr] md:items-end">
+                <div data-aos="fade-up">
+                    <p class="section-kicker">Footer discovery</p>
+                    <h2 class="font-serif text-5xl font-black leading-none text-primary">Keep browsing with intention.</h2>
+                </div>
+                <div class="grid gap-3 sm:grid-cols-3" data-aos="fade-up" data-aos-delay="100">
+                    <a th:href="@{/books}" class="ghost-button editorial-button">All books</a>
+                    <a th:href="@{/books(sort='newest')}" class="ghost-button editorial-button">New arrivals</a>
+                    <a th:href="@{/books(genre='Fiction')}" class="ghost-button editorial-button">Fiction shelf</a>
+                </div>
+            </div>
+        </section>
+
+        <script th:if="${success}">
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: '[[${success}]]',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>
