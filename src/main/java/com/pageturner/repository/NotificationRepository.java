@@ -1,6 +1,5 @@
 package com.pageturner.repository;
 
-import com.pageturner.model.Notification;
 import com.pageturner.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
