@@ -1,0 +1,33 @@
+[ {
+  "id" : "custom-minimal-editorial-custom",
+  "name" : "Minimal Editorial Custom",
+  "description" : "High-whitespace layout with larger typography and restrained surfaces.",
+  "custom" : true,
+  "settings" : {
+    "primaryColor" : "#15110d",
+    "secondaryColor" : "#9f6b3e",
+    "accentColor" : "#9f6b3e",
+    "backgroundColor" : "#f6f1e8",
+    "surfaceColor" : "#fbf8f1",
+    "textColor" : "#15110d",
+    "mutedTextColor" : "#5f584d",
+    "borderColor" : "rgba(21,17,13,0.22)",
+    "successColor" : "#166534",
+    "warningColor" : "#854d0e",
+    "dangerColor" : "#991b1b",
+    "infoColor" : "#1e40af",
+    "focusColor" : "#9f6b3e",
+    "borderRadius" : 4,
+    "buttonStyle" : "square",
+    "shadowIntensity" : 8,
+    "spacingDensity" : "spacious",
+    "typographyScale" : "large",
+    "cardStyle" : "flat",
+    "navbarStyle" : "minimal",
+    "formStyle" : "underline",
+    "glassLevel" : 8,
+    "borderStyle" : "hairline",
+    "animationIntensity" : 45,
+    "layoutDensity" : "open"
+  }
+} ]
