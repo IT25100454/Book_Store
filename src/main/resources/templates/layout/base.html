@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${title != null ? title + ' | PageTurner' : 'PageTurner Bookstore'}">PageTurner Bookstore</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,7 +28,7 @@
         }
     </script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/custom.css}">
     <style th:if="${activeThemeCss != null and !#strings.isEmpty(activeThemeCss)}" th:inline="text">
@@ -50,6 +52,7 @@
                 <div class="hidden items-center gap-9 md:flex">
                     <a th:href="@{/}" th:classappend="${title == 'Home' ? 'text-accent' : 'text-primary'}" class="nav-link text-sm font-bold uppercase tracking-[0.16em]">Home</a>
                     <a th:href="@{/books}" th:classappend="${title == 'Browse Books' ? 'text-accent' : 'text-primary'}" class="nav-link text-sm font-bold uppercase tracking-[0.16em]">Catalog</a>
+                    <a th:href="@{/authors}" th:classappend="${title == 'Browse Authors' ? 'text-accent' : 'text-primary'}" class="nav-link text-sm font-bold uppercase tracking-[0.16em]">Authors</a>
                 </div>
 
                 <div class="flex items-center gap-2 sm:gap-4">
@@ -131,8 +134,8 @@
     </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js"></script>
     <script th:src="@{/js/main.js}"></script>
     <script th:src="@{/js/cinematic.js}"></script>
     <script>
@@ -156,5 +159,6 @@
             setInterval(refreshNotificationCount, 30000);
         }
     </script>
+    <div th:replace="~{fragments/chat-widget :: widget}"></div>
 </body>
 </html>

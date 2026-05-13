@@ -23,19 +23,19 @@ public class AdminController {
             Arrays.asList("Pending", "Processing", "Shipped", "Delivered", "Cancelled");
 
     private final BookService bookService;
+    private final AuthorService authorService;
     private final OrderService orderService;
     private final UserService userService;
     private final ReportService reportService;
     private final NotificationService notificationService;
-    private final AuthorService authorService;
 
-    public AdminController(BookService bookService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService, AuthorService authorService) {
+    public AdminController(BookService bookService, AuthorService authorService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService) {
         this.bookService = bookService;
+        this.authorService = authorService;
         this.orderService = orderService;
         this.userService = userService;
         this.reportService = reportService;
         this.notificationService = notificationService;
-        this.authorService = authorService;
     }
 
     @GetMapping
