@@ -1,13 +1,10 @@
 package com.pageturner.controller;
 
+import com.pageturner.model.Author;
 import com.pageturner.model.Book;
-import com.pageturner.model.User;
-import com.pageturner.service.BookService;
-import com.pageturner.service.OrderService;
-import com.pageturner.service.ReportService;
-import com.pageturner.service.UserService;
-import com.pageturner.service.NotificationService;
 import com.pageturner.model.Order;
+import com.pageturner.model.User;
+import com.pageturner.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +23,15 @@ public class AdminController {
             Arrays.asList("Pending", "Processing", "Shipped", "Delivered", "Cancelled");
 
     private final BookService bookService;
+    private final AuthorService authorService;
     private final OrderService orderService;
     private final UserService userService;
     private final ReportService reportService;
     private final NotificationService notificationService;
 
-    public AdminController(BookService bookService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService) {
+    public AdminController(BookService bookService, AuthorService authorService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService) {
         this.bookService = bookService;
+        this.authorService = authorService;
         this.orderService = orderService;
         this.userService = userService;
         this.reportService = reportService;
@@ -115,6 +114,54 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", "Cannot delete book. It may be part of an order.");
         }
         return "redirect:/admin/books";
+    }
+
+    // --- Author Management ---
+
+    @GetMapping("/authors")
+    public String listAuthors(Model model, RedirectAttributes redirectAttributes) {
+        try {
+            model.addAttribute("authors", authorService.getAllAuthors());
+            return "admin/authors/list";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Could not load authors: " + e.getMessage());
+            return "redirect:/admin";
+        }
+    }
+
+    @GetMapping("/authors/add")
+    public String showAddAuthorForm(Model model) {
+        model.addAttribute("author", new Author());
+        return "admin/authors/form";
+    }
+
+    @PostMapping("/authors/save")
+    public String saveAuthor(@ModelAttribute Author author, RedirectAttributes redirectAttributes) {
+        authorService.saveAuthor(author);
+        redirectAttributes.addFlashAttribute("success", "Author saved successfully.");
+        return "redirect:/admin/authors";
+    }
+
+    @GetMapping("/authors/edit/{id}")
+    public String showEditAuthorForm(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            model.addAttribute("author", authorService.getAuthorById(id));
+            return "admin/authors/form";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Could not load author: " + e.getMessage());
+            return "redirect:/admin/authors";
+        }
+    }
+
+    @GetMapping("/authors/delete/{id}")
+    public String deleteAuthor(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            authorService.deleteAuthor(id);
+            redirectAttributes.addFlashAttribute("success", "Author deleted successfully.");
+        } catch(Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Cannot delete author.");
+        }
+        return "redirect:/admin/authors";
     }
 
     // --- Order Management ---
