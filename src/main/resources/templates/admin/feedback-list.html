@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: html(title='Manage Feedback', content=~{::content})}">
+<body>
+<div th:fragment="content">
+
+    <!-- Header -->
+    <section class="editorial-shell py-14">
+        <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between" data-aos="fade-up">
+            <div>
+                <p class="section-kicker">Admin · Feedback</p>
+                <h1 class="editorial-heading mt-6">Feedback inbox.</h1>
+            </div>
+            <!-- Pending badge -->
+            <div class="flex items-center gap-3">
+                <span class="status-badge border-yellow-500/40 text-yellow-700 text-xs"
+                      th:text="${pendingCount + ' pending'}">0 pending</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="editorial-shell pb-8">
+        <form th:action="@{/admin/feedback}" method="get"
+              class="flex flex-wrap items-end gap-4 border-t border-black/10 pt-8">
+            <div class="space-y-1">
+                <label class="text-xs font-black uppercase tracking-[0.16em] text-[#716b61]">Status</label>
+                <select name="status" class="min-w-[160px] px-3 py-2 text-sm">
+                    <option value="">All statuses</option>
+                    <option th:each="s : ${statuses}" th:value="${s}"
+                            th:selected="${selectedStatus == s}"
+                            th:text="${s.name()}">STATUS</option>
+                </select>
+            </div>
+            <div class="space-y-1">
+                <label class="text-xs font-black uppercase tracking-[0.16em] text-[#716b61]">Type</label>
+                <select name="type" class="min-w-[160px] px-3 py-2 text-sm">
+                    <option value="">All types</option>
+                    <option th:each="t : ${types}" th:value="${t}"
+                            th:selected="${selectedType == t}"
+                            th:text="${t.name().replace('_',' ')}">TYPE</option>
+                </select>
+            </div>
+            <button type="submit" class="editorial-button px-6">Filter</button>
+            <a th:href="@{/admin/feedback}" class="ghost-button editorial-button px-6">Reset</a>
+        </form>
+    </section>
+
+    <!-- Feedback table -->
+    <section class="editorial-shell pb-28 lg:pb-36">
+
+        <div th:if="${feedbackPage.isEmpty()}" class="py-16 text-center">
+            <i class="fa-regular fa-inbox text-4xl text-black/15"></i>
+            <p class="mt-5 font-serif text-2xl font-black text-primary">Nothing matches your filters.</p>
+        </div>
+
+        <div th:unless="${feedbackPage.isEmpty()}" class="overflow-x-auto">
+            <table class="premium-table w-full min-w-[800px]">
+                <thead>
+                    <tr>
+                        <th class="text-left">#</th>
+                        <th class="text-left">Subject</th>
+                        <th class="text-left">Type</th>
+                        <th class="text-left">Status</th>
+                        <th class="text-left">Rating</th>
+                        <th class="text-left">User</th>
+                        <th class="text-left">Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="fb : ${feedbackPage.content}">
+                        <td class="text-xs text-[#716b61]" th:text="${fb.id}">1</td>
+                        <td>
+                            <p class="font-semibold text-primary" th:text="${#strings.abbreviate(fb.subject, 48)}">Subject</p>
+                            <p class="mt-0.5 text-xs text-[#716b61]" th:text="${#strings.abbreviate(fb.message, 72)}">Message preview</p>
+                        </td>
+                        <td>
+                            <span class="status-badge border-[rgba(159,107,62,0.4)] text-accent text-[10px]"
+                                  th:text="${fb.type.name().replace('_',' ')}">TYPE</span>
+                        </td>
+                        <td>
+                            <span th:class="${'status-badge text-[10px] ' +
+                                (fb.status.name() == 'PENDING'   ? 'border-yellow-500/40 text-yellow-700' :
+                                 fb.status.name() == 'REVIEWED'  ? 'border-blue-500/40 text-blue-700' :
+                                 fb.status.name() == 'RESOLVED'  ? 'border-green-600/40 text-green-700' :
+                                 'border-black/20 text-[#716b61]')}"
+                                  th:text="${fb.status.name()}">STATUS</span>
+                        </td>
+                        <td>
+                            <span th:if="${fb.rating != null}" class="flex items-center gap-0.5">
+                                <i th:each="s : ${#numbers.sequence(1,5)}"
+                                   th:class="${'fa-star text-xs ' + (s <= fb.rating ? 'fa-solid text-[#9f6b3e]' : 'fa-regular text-black/20')}"></i>
+                            </span>
+                            <span th:unless="${fb.rating != null}" class="text-xs text-[#716b61]">—</span>
+                        </td>
+                        <td class="text-sm text-[#5f584d]"
+                            th:text="${fb.anonymous ? 'Anonymous' : (fb.user != null ? fb.user.name : '—')}">User</td>
+                        <td class="text-xs text-[#716b61]"
+                            th:text="${#temporals.format(fb.createdAt, 'dd MMM yyyy')}">Date</td>
+                        <td class="text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <a th:href="@{/admin/feedback/{id}(id=${fb.id})}"
+                                   class="ghost-button editorial-button px-4 py-2 text-xs">View</a>
+                                <form th:action="@{/admin/feedback/{id}/delete(id=${fb.id})}" method="post"
+                                      onsubmit="return confirm('Delete this feedback?')">
+                                    <button type="submit" class="danger-button editorial-button px-3 py-2 text-xs">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div th:if="${feedbackPage.totalPages > 1}"
+             class="mt-12 flex flex-wrap items-center justify-center gap-2">
+            <a th:if="${!feedbackPage.first}"
+               th:href="@{/admin/feedback(page=${feedbackPage.number - 1}, status=${selectedStatus}, type=${selectedType})}"
+               class="ghost-button editorial-button px-5 py-2 text-sm">← Prev</a>
+            <span th:each="i : ${#numbers.sequence(0, feedbackPage.totalPages - 1)}">
+                <a th:href="@{/admin/feedback(page=${i}, status=${selectedStatus}, type=${selectedType})}"
+                   th:text="${i + 1}"
+                   th:class="${'editorial-button px-4 py-2 text-sm ' + (i == feedbackPage.number ? '' : 'ghost-button')}">1</a>
+            </span>
+            <a th:if="${!feedbackPage.last}"
+               th:href="@{/admin/feedback(page=${feedbackPage.number + 1}, status=${selectedStatus}, type=${selectedType})}"
+               class="ghost-button editorial-button px-5 py-2 text-sm">Next →</a>
+        </div>
+
+    </section>
+
+    <!-- Flash -->
+    <script th:if="${success}">
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({ icon: 'success', title: 'Done', text: '[[${success}]]', timer: 2500, showConfirmButton: false });
+        });
+    </script>
+
+</div>
+</body>
+</html>
