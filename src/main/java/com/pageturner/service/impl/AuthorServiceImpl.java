@@ -1,8 +1,10 @@
 package com.pageturner.service.impl;
 
+import com.pageturner.exceptions.AuthorNotFoundException;
 import com.pageturner.model.Author;
 import com.pageturner.repository.AuthorRepository;
 import com.pageturner.service.AuthorService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,12 +35,19 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     @Transactional
     public Author saveAuthor(Author author) {
-        return authorRepository.save(author);
+        try {
+            return authorRepository.save(author);
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Failed to save author");
+        }
     }
 
     @Override
     @Transactional
     public void deleteAuthor(Long id) {
+        if (!authorRepository.existsById(id)) {
+            throw new AuthorNotFoundException("Author not found with id: " + id);
+        }
         authorRepository.deleteById(id);
     }
 
@@ -51,4 +60,6 @@ public class AuthorServiceImpl implements AuthorService {
     public List<Author> searchAuthors(String query) {
         return authorRepository.findByNameContainingIgnoreCase(query);
     }
+
+
 }
