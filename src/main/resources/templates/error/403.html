@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Access Denied', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="editorial-shell flex min-h-[calc(100vh-76px)] items-center justify-center py-16">
+        <div class="glass-panel max-w-2xl p-8 text-center md:p-12" data-aos="fade-up">
+            <i class="fa-solid fa-ban text-5xl text-red-700"></i>
+            <p class="section-kicker mt-10 justify-center">403</p>
+            <h1 class="mt-6 font-serif text-6xl font-black leading-none text-primary">Access denied.</h1>
+            <p class="mx-auto mt-5 max-w-md leading-7 text-[#716b61]">You do not have permission to access this resource.</p>
+            <a th:href="@{/}" class="editorial-button mt-8"><i class="fa-solid fa-house"></i> Back home</a>
+        </div>
+    </div>
+</body>
+</html>

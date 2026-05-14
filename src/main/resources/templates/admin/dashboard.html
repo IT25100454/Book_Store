@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Admin Dashboard', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="flex min-h-[calc(100vh-76px)]">
+        <aside th:replace="~{admin/layout :: sidebar}"></aside>
+        <main class="flex-1 overflow-x-hidden px-5 py-10 md:px-10 lg:px-14">
+            <div class="mx-auto max-w-7xl">
+                <div class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end" data-aos="fade-up">
+                    <div>
+                        <p class="section-kicker">Operations</p>
+                        <h1 class="editorial-heading mt-6">Dashboard overview.</h1>
+                    </div>
+                    <a th:href="@{/admin/export-inventory}" class="editorial-button">
+                        <i class="fa-solid fa-file-export"></i> Export inventory
+                    </a>
+                </div>
+
+                <section class="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+                    <div class="editorial-card p-7" data-aos="fade-up">
+                        <i class="fa-solid fa-book text-2xl text-accent"></i>
+                        <p class="mt-8 text-xs font-black uppercase tracking-[0.18em] text-[#716b61]">Total Books</p>
+                        <p class="mt-2 font-serif text-6xl font-black text-primary" th:text="${totalBooks}">0</p>
+                    </div>
+                    <div class="editorial-card p-7" data-aos="fade-up" data-aos-delay="70">
+                        <i class="fa-solid fa-bag-shopping text-2xl text-accent"></i>
+                        <p class="mt-8 text-xs font-black uppercase tracking-[0.18em] text-[#716b61]">Total Orders</p>
+                        <p class="mt-2 font-serif text-6xl font-black text-primary" th:text="${totalOrders}">0</p>
+                    </div>
+                    <div class="editorial-card p-7" data-aos="fade-up" data-aos-delay="140">
+                        <i class="fa-solid fa-users text-2xl text-accent"></i>
+                        <p class="mt-8 text-xs font-black uppercase tracking-[0.18em] text-[#716b61]">Total Users</p>
+                        <p class="mt-2 font-serif text-6xl font-black text-primary" th:text="${totalUsers}">0</p>
+                    </div>
+                    <div class="editorial-card p-7" data-aos="fade-up" data-aos-delay="210">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl text-red-700"></i>
+                        <p class="mt-8 text-xs font-black uppercase tracking-[0.18em] text-[#716b61]">Low Stock</p>
+                        <p class="mt-2 font-serif text-6xl font-black text-primary" th:text="${#lists.size(lowStockBooks)}">0</p>
+                    </div>
+                </section>
+
+                <section class="mt-10 grid gap-8 xl:grid-cols-[1.6fr_0.9fr]">
+                    <div class="glass-panel p-7" data-aos="fade-up">
+                        <div class="mb-8 flex items-center justify-between gap-4">
+                            <div>
+                                <p class="section-kicker">Revenue</p>
+                                <h2 class="mt-4 font-serif text-4xl font-black text-primary">Monthly sales</h2>
+                            </div>
+                        </div>
+                        <canvas id="salesChart" height="130"></canvas>
+                    </div>
+
+                    <div class="glass-panel p-7" data-aos="fade-up" data-aos-delay="100">
+                        <div class="mb-6 flex items-center justify-between border-b border-black/10 pb-5">
+                            <h2 class="font-serif text-4xl font-black text-primary">Stock watch</h2>
+                            <span class="status-badge text-red-700" th:text="${#lists.size(lowStockBooks)} + ' items'">0 items</span>
+                        </div>
+                        <div th:if="${#lists.isEmpty(lowStockBooks)}" class="py-10 text-center">
+                            <i class="fa-solid fa-check-circle text-4xl text-green-700"></i>
+                            <p class="mt-4 font-semibold text-[#716b61]">All books are sufficiently stocked.</p>
+                        </div>
+                        <ul th:if="${not #lists.isEmpty(lowStockBooks)}" class="max-h-96 divide-y divide-black/10 overflow-y-auto">
+                            <li th:each="book : ${lowStockBooks}" class="flex items-center justify-between gap-4 py-5">
+                                <div class="min-w-0">
+                                    <a th:href="@{/admin/books/edit/{id}(id=${book.id})}" class="block truncate font-bold text-primary transition hover:text-accent" th:text="${book.title}">Book Title</a>
+                                    <p class="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-[#716b61]" th:text="${'ISBN: ' + book.isbn}">ISBN</p>
+                                </div>
+                                <span class="status-badge shrink-0 text-red-700">Qty <span th:text="${book.stockQuantity}" class="ml-1">0</span></span>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+
+            <script th:inline="javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    var ctx = document.getElementById('salesChart').getContext('2d');
+                    var labels = /*[[${chartLabels}]]*/ [];
+                    var data = /*[[${chartData}]]*/ [];
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Revenue (Rs.)',
+                                data: data,
+                                backgroundColor: 'rgba(159, 107, 62, 0.72)',
+                                borderColor: 'rgba(23, 21, 18, 0.85)',
+                                borderWidth: 1,
+                                borderRadius: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: 'rgba(23, 21, 18, 0.08)' },
+                                    ticks: { callback: function(value) { return 'Rs. ' + value.toLocaleString(); } }
+                                },
+                                x: { grid: { display: false } }
+                            },
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                });
+            </script>
+            <script th:if="${success}">
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({ icon: 'success', title: 'Success', text: '[[${success}]]', timer: 3000, showConfirmButton: false });
+                });
+            </script>
+            <script th:if="${error}">
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({ icon: 'error', title: 'Error', text: '[[${error}]]', timer: 3000, showConfirmButton: false });
+                });
+            </script>
+        </main>
+    </div>
+</body>
+</html>

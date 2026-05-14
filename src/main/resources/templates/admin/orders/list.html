@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Manage Orders', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="flex min-h-[calc(100vh-76px)]">
+        <aside th:replace="~{admin/layout :: sidebar}"></aside>
+        <main class="flex-1 overflow-x-hidden px-5 py-10 md:px-10 lg:px-14">
+            <div class="mx-auto max-w-7xl" data-aos="fade-up">
+                <a th:href="@{/admin}" class="text-sm font-black uppercase tracking-[0.16em] text-[#716b61] transition hover:text-accent"><i class="fa-solid fa-arrow-left mr-2"></i>Dashboard</a>
+                <h1 class="editorial-heading mt-5">Order room.</h1>
+
+                <div class="mt-10 overflow-x-auto">
+                    <table class="premium-table min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Order / Date</th>
+                                <th class="text-left">Customer</th>
+                                <th class="text-left">Total</th>
+                                <th class="text-left">Status</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="order : ${orders}">
+                                <td>
+                                    <p class="font-serif text-2xl font-black leading-none text-primary" th:text="${order.orderNumber}">#123</p>
+                                    <p class="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#716b61]" th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy HH:mm')}">Date</p>
+                                </td>
+                                <td>
+                                    <p class="font-bold text-primary" th:text="${order.user.name}">Name</p>
+                                    <p class="mt-1 text-sm text-[#716b61]" th:text="${order.user.email}">Email</p>
+                                </td>
+                                <td class="font-black text-primary" th:text="${'Rs. ' + #numbers.formatDecimal(order.totalAmount, 1, 2)}">Rs. 19.99</td>
+                                <td>
+                                    <span th:if="${order.status == 'Pending'}" class="status-badge text-yellow-700">Pending</span>
+                                    <span th:if="${order.status == 'Processing'}" class="status-badge text-blue-700">Processing</span>
+                                    <span th:if="${order.status == 'Shipped'}" class="status-badge text-purple-700">Shipped</span>
+                                    <span th:if="${order.status == 'Delivered'}" class="status-badge text-green-700">Delivered</span>
+                                    <span th:if="${order.status == 'Cancelled'}" class="status-badge text-red-700">Cancelled</span>
+                                </td>
+                                <td class="text-right">
+                                    <form th:action="@{/admin/orders/update-status}" method="post" class="flex justify-end gap-2">
+                                        <input type="hidden" name="orderId" th:value="${order.id}"/>
+                                        <select name="status" class="premium-input min-w-36 px-3">
+                                            <option th:each="status : ${statuses}" th:value="${status}" th:text="${status}" th:selected="${status == order.status}"></option>
+                                        </select>
+                                        <button type="submit" class="editorial-button min-h-0 px-4 py-2 text-sm">Update</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <script th:if="${success}">document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon:'success', title:'Success', text:'[[${success}]]', timer:3000, showConfirmButton:false}); });</script>
+        </main>
+    </div>
+</body>
+</html>
