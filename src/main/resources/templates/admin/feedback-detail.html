@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: html(title='Feedback Detail', content=~{::content})}">
+<body>
+<div th:fragment="content">
+
+    <section class="editorial-shell py-14">
+        <a th:href="@{/admin/feedback}" class="premium-link inline-flex px-6 py-2 text-sm mb-10">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Back to inbox
+        </a>
+
+        <div class="grid gap-14 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
+
+            <!-- Feedback content -->
+            <div data-aos="fade-up">
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <span class="status-badge border-[rgba(159,107,62,0.4)] text-accent text-[10px]"
+                          th:text="${feedback.type.name().replace('_',' ')}">TYPE</span>
+                    <span th:class="${'status-badge text-[10px] ' +
+                        (feedback.status.name() == 'PENDING'   ? 'border-yellow-500/40 text-yellow-700' :
+                         feedback.status.name() == 'REVIEWED'  ? 'border-blue-500/40 text-blue-700' :
+                         feedback.status.name() == 'RESOLVED'  ? 'border-green-600/40 text-green-700' :
+                         'border-black/20 text-[#716b61]')}"
+                          th:text="${feedback.status.name()}">STATUS</span>
+                </div>
+
+                <h1 class="font-serif text-4xl font-black text-primary" th:text="${feedback.subject}">Subject</h1>
+
+                <div class="mt-3 flex flex-wrap items-center gap-4 text-xs text-[#716b61]">
+                    <span th:text="${feedback.anonymous ? 'Anonymous' : (feedback.user != null ? feedback.user.name : '—')}">User</span>
+                    <span>·</span>
+                    <time th:text="${#temporals.format(feedback.createdAt, 'dd MMM yyyy, HH:mm')}">Date</time>
+                    <span th:if="${feedback.rating != null}" class="flex items-center gap-0.5">
+                        <i th:each="s : ${#numbers.sequence(1,5)}"
+                           th:class="${'fa-star text-xs ' + (s <= feedback.rating ? 'fa-solid text-[#9f6b3e]' : 'fa-regular text-black/20')}"></i>
+                    </span>
+                </div>
+
+                <div class="mt-8 border-t border-black/10 pt-8">
+                    <p class="text-base leading-8 text-[#5f584d]" th:text="${feedback.message}">Message</p>
+                </div>
+
+                <!-- Existing reply -->
+                <div th:if="${feedback.adminReply != null}"
+                     class="mt-10 border-l-2 border-[#9f6b3e] pl-6">
+                    <p class="text-xs font-black uppercase tracking-[0.16em] text-accent">Your reply</p>
+                    <p class="mt-3 text-sm leading-7 text-[#5f584d]" th:text="${feedback.adminReply}">Reply</p>
+                    <time class="mt-1 block text-xs text-[#716b61]"
+                          th:text="${#temporals.format(feedback.repliedAt, 'dd MMM yyyy')}">Date</time>
+                </div>
+
+                <!-- Reply form -->
+                <div class="mt-10">
+                    <p class="text-xs font-black uppercase tracking-[0.18em] text-[#716b61] mb-4"
+                       th:text="${feedback.adminReply != null ? 'Update reply' : 'Write a reply'}">Write a reply</p>
+                    <form th:action="@{/admin/feedback/{id}/reply(id=${feedback.id})}" method="post">
+                        <textarea name="adminReply" rows="5"
+                                  th:text="${feedback.adminReply}"
+                                  placeholder="Your reply to this feedback…"
+                                  class="w-full resize-none px-4 py-3 text-sm leading-7"></textarea>
+                        <button type="submit" class="editorial-button mt-4 px-8">
+                            <i class="fa-solid fa-reply mr-2"></i>
+                            <span th:text="${feedback.adminReply != null ? 'Update reply' : 'Send reply'}">Send reply</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sidebar actions -->
+            <aside class="space-y-6" data-aos="fade-up" data-aos-delay="80">
+
+                <!-- Status update -->
+                <div class="editorial-card p-6">
+                    <p class="text-xs font-black uppercase tracking-[0.18em] text-[#716b61] mb-4">Update status</p>
+                    <form th:action="@{/admin/feedback/{id}/status(id=${feedback.id})}" method="post" class="flex flex-col gap-3">
+                        <select name="status" class="w-full px-3 py-2 text-sm">
+                            <option th:each="s : ${statuses}"
+                                    th:value="${s}"
+                                    th:selected="${feedback.status == s}"
+                                    th:text="${s.name()}">STATUS</option>
+                        </select>
+                        <button type="submit" class="editorial-button w-full justify-center">Update</button>
+                    </form>
+                </div>
+
+                <!-- Meta info -->
+                <div class="editorial-card p-6 space-y-4">
+                    <p class="text-xs font-black uppercase tracking-[0.18em] text-[#716b61]">Details</p>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-[#716b61]">Submitted</span>
+                            <span class="font-semibold text-primary"
+                                  th:text="${#temporals.format(feedback.createdAt, 'dd MMM yyyy')}">Date</span>
+                        </div>
+                        <div class="flex justify-between" th:if="${feedback.repliedAt != null}">
+                            <span class="text-[#716b61]">Replied</span>
+                            <span class="font-semibold text-primary"
+                                  th:text="${#temporals.format(feedback.repliedAt, 'dd MMM yyyy')}">Date</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-[#716b61]">Anonymous</span>
+                            <span class="font-semibold text-primary"
+                                  th:text="${feedback.anonymous ? 'Yes' : 'No'}">No</span>
+                        </div>
+                        <div class="flex justify-between" th:if="${feedback.book != null}">
+                            <span class="text-[#716b61]">Book</span>
+                            <a th:href="@{/books/{id}(id=${feedback.book.id})}"
+                               class="font-semibold text-accent underline underline-offset-2"
+                               th:text="${feedback.book.title}">Book</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete -->
+                <form th:action="@{/admin/feedback/{id}/delete(id=${feedback.id})}" method="post"
+                      onsubmit="return confirm('Permanently delete this feedback?')">
+                    <button type="submit" class="danger-button editorial-button w-full justify-center">
+                        <i class="fa-solid fa-trash mr-2"></i> Delete feedback
+                    </button>
+                </form>
+
+            </aside>
+        </div>
+    </section>
+
+    <script th:if="${success}">
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({ icon: 'success', title: 'Updated', text: '[[${success}]]', timer: 2500, showConfirmButton: false });
+        });
+    </script>
+
+</div>
+</body>
+</html>

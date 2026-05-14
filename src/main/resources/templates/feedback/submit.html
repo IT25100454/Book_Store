@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: html(title='Submit Feedback', content=~{::content})}">
+<body>
+<div th:fragment="content">
+
+    <!-- Page header -->
+    <section class="editorial-shell py-16 lg:py-20">
+        <div class="max-w-3xl" data-aos="fade-up">
+            <p class="section-kicker">Share your thoughts</p>
+            <h1 class="editorial-heading mt-6">We'd love to hear<br>from you.</h1>
+            <p class="mt-6 text-lg leading-8 text-[#5f584d]">
+                Whether it's a book review, a suggestion, or a general note — your feedback helps PageTurner improve.
+            </p>
+        </div>
+    </section>
+
+    <!-- Form -->
+    <section class="editorial-shell pb-28 lg:pb-36">
+        <div class="grid gap-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+
+            <div data-aos="fade-up">
+                <form th:action="@{/feedback/submit}" method="post" th:object="${feedback}" class="space-y-8">
+
+                    <!-- Type -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-black uppercase tracking-[0.18em] text-[#716b61]">Feedback type</label>
+                        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                            <label th:each="t : ${types}"
+                                   class="group relative flex cursor-pointer items-center gap-3 border border-black/10 bg-[rgba(251,248,241,0.68)] p-4 transition hover:border-[rgba(159,107,62,0.5)] hover:bg-[rgba(255,252,246,0.92)]">
+                                <input type="radio" th:field="*{type}" th:value="${t}"
+                                       class="sr-only peer">
+                                <span class="flex h-4 w-4 shrink-0 items-center justify-center border border-black/20 transition peer-checked:border-[#9f6b3e] peer-checked:bg-[#9f6b3e]">
+                                    <span class="hidden h-2 w-2 bg-white peer-checked:block"></span>
+                                </span>
+                                <span class="text-sm font-semibold text-primary capitalize" th:text="${t.name().toLowerCase().replace('_', ' ')}">type</span>
+                                <!-- checked indicator overlay -->
+                                <span class="pointer-events-none absolute inset-0 border border-[#9f6b3e] opacity-0 transition peer-checked:opacity-100"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Subject -->
+                    <div class="space-y-2">
+                        <label for="subject" class="text-xs font-black uppercase tracking-[0.18em] text-[#716b61]">Subject</label>
+                        <input type="text" id="subject" th:field="*{subject}"
+                               placeholder="Brief summary of your feedback"
+                               class="w-full px-4 py-3 text-sm">
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-black uppercase tracking-[0.18em] text-[#716b61]">Rating <span class="normal-case font-normal">(optional)</span></label>
+                        <div class="flex items-center gap-3">
+                            <label th:each="star : ${#numbers.sequence(1,5)}"
+                                   class="flex cursor-pointer flex-col items-center gap-1">
+                                <input type="radio" th:field="*{rating}" th:value="${star}" class="sr-only peer">
+                                <i class="fa-solid fa-star text-xl text-black/15 transition peer-checked:text-[#9f6b3e]"></i>
+                                <span class="text-xs text-[#716b61]" th:text="${star}">1</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Message -->
+                    <div class="space-y-2">
+                        <label for="message" class="text-xs font-black uppercase tracking-[0.18em] text-[#716b61]">Message</label>
+                        <textarea id="message" th:field="*{message}" rows="6"
+                                  placeholder="Tell us more…"
+                                  class="w-full resize-none px-4 py-3 text-sm leading-7"></textarea>
+                    </div>
+
+                    <!-- Anonymous -->
+                    <label class="flex cursor-pointer items-center gap-3">
+                        <input type="checkbox" th:field="*{anonymous}"
+                               class="h-4 w-4 accent-[#9f6b3e]">
+                        <span class="text-sm text-[#716b61]">Submit anonymously (your name won't appear)</span>
+                    </label>
+
+                    <div class="pt-2">
+                        <button type="submit" class="editorial-button px-10">
+                            Send feedback <i class="fa-solid fa-paper-plane ml-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Side info -->
+            <aside class="space-y-8" data-aos="fade-up" data-aos-delay="80">
+                <div class="editorial-card p-8">
+                    <i class="fa-solid fa-shield-heart text-2xl text-accent"></i>
+                    <h3 class="mt-6 font-serif text-2xl font-black text-primary">Your voice matters</h3>
+                    <p class="mt-3 text-sm leading-7 text-[#716b61]">Every piece of feedback is read by our team. We use it to improve our catalog, service, and reading experience.</p>
+                </div>
+                <div class="editorial-card p-8">
+                    <i class="fa-solid fa-clock text-2xl text-accent"></i>
+                    <h3 class="mt-6 font-serif text-2xl font-black text-primary">Response time</h3>
+                    <p class="mt-3 text-sm leading-7 text-[#716b61]">We aim to respond to all messages within 2 business days. You can track your submissions on the <a th:href="@{/feedback/my-feedback}" class="text-accent underline underline-offset-2">my feedback</a> page.</p>
+                </div>
+                <div class="border-t border-black/10 pt-8">
+                    <a th:href="@{/feedback/my-feedback}" class="ghost-button editorial-button w-full justify-center">
+                        View my previous feedback <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+            </aside>
+
+        </div>
+    </section>
+
+    <!-- Flash alerts via SweetAlert (matching existing pattern) -->
+    <script th:if="${success}">
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({ icon: 'success', title: 'Sent!', text: '[[${success}]]', timer: 3000, showConfirmButton: false });
+        });
+    </script>
+    <script th:if="${error}">
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({ icon: 'error', title: 'Oops', text: '[[${error}]]' });
+        });
+    </script>
+
+</div>
+</body>
+</html>
