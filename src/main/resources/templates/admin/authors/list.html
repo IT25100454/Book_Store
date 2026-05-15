@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Manage Authors', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="flex min-h-[calc(100vh-76px)]">
+        <aside th:replace="~{admin/layout :: sidebar}"></aside>
+        <main class="flex-1 overflow-x-hidden px-5 py-10 md:px-10 lg:px-14">
+            <div class="mx-auto max-w-7xl" data-aos="fade-up">
+                <div class="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+                    <div>
+                        <a th:href="@{/admin}" class="text-sm font-black uppercase tracking-[0.16em] text-[#716b61] transition hover:text-accent"><i class="fa-solid fa-arrow-left mr-2"></i>Dashboard</a>
+                        <h1 class="editorial-heading mt-5">Author directory.</h1>
+                    </div>
+                    <a th:href="@{/admin/authors/add}" class="editorial-button"><i class="fa-solid fa-plus"></i> Add author</a>
+                </div>
+
+                <div class="mt-10 overflow-x-auto">
+                    <table class="premium-table min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Author</th>
+                                <th class="text-left">Nationality</th>
+                                <th class="text-left">Bio</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="author : ${authors}">
+                                <td>
+                                    <div class="flex items-center gap-4">
+                                        <img class="h-16 w-16 rounded-full object-cover shadow-lg" th:src="${author.photoUrl}" alt="" onerror="this.src='/images/book-placeholder.png'">
+                                        <div class="min-w-0">
+                                            <a th:href="@{/authors/{id}(id=${author.id})}" th:text="${author.name}" class="block max-w-md truncate font-serif text-2xl font-black leading-none text-primary transition hover:text-accent">Name</a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-badge text-primary" th:text="${author.nationality}">Nationality</span>
+                                </td>
+                                <td>
+                                    <p class="line-clamp-2 max-w-xl text-sm leading-6 text-[#5f584d]" th:text="${author.bio}">Bio</p>
+                                </td>
+                                <td class="text-right">
+                                    <a th:href="@{/admin/authors/edit/{id}(id=${author.id})}" class="mr-2 inline-flex h-10 w-10 items-center justify-center border border-black/10 text-primary transition hover:border-accent hover:text-accent"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a th:href="@{/admin/authors/delete/{id}(id=${author.id})}" class="inline-flex h-10 w-10 items-center justify-center border border-red-200 text-red-700 transition hover:bg-red-700 hover:text-white" onclick="return confirm('Are you sure you want to delete this author?');"><i class="fa-solid fa-trash-can"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <script th:if="${success}">document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon:'success', title:'Success', text:'[[${success}]]', timer:3000, showConfirmButton:false}); });</script>
+            <script th:if="${error}">document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon:'error', title:'Error', text:'[[${error}]]', timer:3000, showConfirmButton:false}); });</script>
+        </main>
+    </div>
+</body>
+</html>
