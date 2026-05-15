@@ -8,7 +8,7 @@
                 <span class="mx-3">/</span>
                 <a th:href="@{/authors}" class="transition hover:text-accent">Authors</a>
                 <span class="mx-3">/</span>
-                <a th:href="@{/authors(nationality=${author.nationality})}" class="transition hover:text-accent" th:text="${author.nationality}">Nationality</a>
+                <a th:href="@{/authors/${author.nationality}}" class="transition hover:text-accent" th:text="${author.nationality}">Nationality</a>
             </nav>
 
             <div class="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
