@@ -94,6 +94,11 @@
             <artifactId>springboot3-dotenv</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- Chat feature uses pure REST + AJAX polling (no WebSocket needed) -->
     </dependencies>
 
