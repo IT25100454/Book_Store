@@ -1,11 +1,11 @@
 package com.pageturner.controller;
 
-import com.pageturner.model.User;
-import com.pageturner.service.UserService;
 import com.pageturner.model.PendingRegistration;
-import com.pageturner.service.OtpService;
-import com.pageturner.service.NotificationService;
+import com.pageturner.model.User;
 import com.pageturner.service.EmailNotificationService;
+import com.pageturner.service.NotificationService;
+import com.pageturner.service.OtpService;
+import com.pageturner.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

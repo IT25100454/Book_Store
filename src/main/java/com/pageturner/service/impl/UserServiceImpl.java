@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public User saveUser(User user) {
         if (user.getId() == null) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public void updateUser(User user) {
         userRepository.save(user);
     }

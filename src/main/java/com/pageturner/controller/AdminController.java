@@ -1,9 +1,7 @@
 package com.pageturner.controller;
 
 import com.pageturner.model.Book;
-import com.pageturner.model.Author;
 import com.pageturner.model.User;
-import com.pageturner.service.AuthorService;
 import com.pageturner.service.BookService;
 import com.pageturner.service.OrderService;
 import com.pageturner.service.ReportService;
@@ -28,15 +26,13 @@ public class AdminController {
             Arrays.asList("Pending", "Processing", "Shipped", "Delivered", "Cancelled");
 
     private final BookService bookService;
-    private final AuthorService authorService;
     private final OrderService orderService;
     private final UserService userService;
     private final ReportService reportService;
     private final NotificationService notificationService;
 
-    public AdminController(BookService bookService, AuthorService authorService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService) {
+    public AdminController(BookService bookService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService) {
         this.bookService = bookService;
-        this.authorService = authorService;
         this.orderService = orderService;
         this.userService = userService;
         this.reportService = reportService;
@@ -121,54 +117,6 @@ public class AdminController {
         return "redirect:/admin/books";
     }
 
-    // --- Author Management ---
-
-    @GetMapping("/authors")
-    public String listAuthors(Model model, RedirectAttributes redirectAttributes) {
-        try {
-            model.addAttribute("authors", authorService.getAllAuthors());
-            return "admin/authors/list";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Could not load authors: " + e.getMessage());
-            return "redirect:/admin";
-        }
-    }
-
-    @GetMapping("/authors/add")
-    public String showAddAuthorForm(Model model) {
-        model.addAttribute("author", new Author());
-        return "admin/authors/form";
-    }
-
-    @PostMapping("/authors/save")
-    public String saveAuthor(@ModelAttribute Author author, RedirectAttributes redirectAttributes) {
-        authorService.saveAuthor(author);
-        redirectAttributes.addFlashAttribute("success", "Author saved successfully.");
-        return "redirect:/admin/authors";
-    }
-
-    @GetMapping("/authors/edit/{id}")
-    public String showEditAuthorForm(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
-        try {
-            model.addAttribute("author", authorService.getAuthorById(id));
-            return "admin/authors/form";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Could not load author: " + e.getMessage());
-            return "redirect:/admin/authors";
-        }
-    }
-
-    @GetMapping("/authors/delete/{id}")
-    public String deleteAuthor(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        try {
-            authorService.deleteAuthor(id);
-            redirectAttributes.addFlashAttribute("success", "Author deleted successfully.");
-        } catch(Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Cannot delete author.");
-        }
-        return "redirect:/admin/authors";
-    }
-
     // --- Order Management ---
 
     @GetMapping("/orders")
@@ -189,19 +137,30 @@ public class AdminController {
             @RequestParam("status") String status,
             RedirectAttributes redirectAttributes) {
         try {
-            orderService.updateOrderStatus(orderId, status);
-            Order updatedOrder = orderService.getOrderById(orderId);
+            Order existingOrder = orderService.getOrderById(orderId);
+            String previousStatus = existingOrder != null ? existingOrder.getStatus() : null;
+            Order updatedOrder = orderService.updateOrderStatus(orderId, status);
             if (updatedOrder != null) {
-                notificationService.notifyOrderStatusChange(updatedOrder);
-                updatedOrder.getItems().forEach(item -> {
-                    if (item.getBook().getStockQuantity() < 5) {
-                        userService.getAllUsers().stream()
-                                .filter(u -> "ROLE_ADMIN".equals(u.getRole()))
-                                .forEach(admin -> notificationService.notifyAdminLowStock(item.getBook(), admin));
+                if (!updatedOrder.getStatus().equals(previousStatus)) {
+                    try {
+                        notificationService.notifyOrderStatusChange(updatedOrder);
+                    } catch (Exception notificationError) {
+                        System.err.println("Order status notification failed for order #" + updatedOrder.getOrderNumber() + ": " + notificationError.getMessage());
                     }
-                });
+                }
+                try {
+                    updatedOrder.getItems().forEach(item -> {
+                        if (item.getBook().getStockQuantity() < 5) {
+                            userService.getAllUsers().stream()
+                                    .filter(u -> "ROLE_ADMIN".equals(u.getRole()))
+                                    .forEach(admin -> notificationService.notifyAdminLowStock(item.getBook(), admin));
+                        }
+                    });
+                } catch (Exception notificationError) {
+                    System.err.println("Low stock notification failed after order #" + updatedOrder.getOrderNumber() + " status update: " + notificationError.getMessage());
+                }
             }
-            redirectAttributes.addFlashAttribute("success", "Order #" + orderId + " status updated to " + status);
+            redirectAttributes.addFlashAttribute("success", "Order #" + orderId + " status updated to " + updatedOrder.getStatus());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to update order: " + e.getMessage());
         }

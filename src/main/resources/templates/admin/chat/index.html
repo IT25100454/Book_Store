@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: html(title='Chat', content=~{::content})}">
+<body>
+<div th:fragment="content" class="flex min-h-[calc(100vh-76px)]">
+    <aside th:replace="~{admin/layout :: sidebar}"></aside>
+
+    <main class="flex flex-1 overflow-hidden">
+
+        <!-- ── Conversation list ── -->
+        <div class="hidden w-72 shrink-0 flex-col border-r border-black/10 md:flex">
+            <div class="border-b border-black/10 p-6">
+                <p class="section-kicker">Support</p>
+                <h2 class="mt-2 font-serif text-2xl font-black text-primary">Conversations</h2>
+            </div>
+
+            <div class="border-b border-black/10 p-3">
+                <div class="relative">
+                    <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-xs text-[#716b61]/50"></i>
+                    <input id="convSearch" type="text" placeholder="Search users…"
+                           oninput="filterConvs()"
+                           class="w-full border border-black/10 bg-black/[0.02] pl-8 pr-3 py-2 text-xs text-primary rounded-lg outline-none focus:border-primary/30"/>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto" id="convList">
+                <div th:if="${chatUsernames == null or chatUsernames.isEmpty()}"
+                     class="p-6 text-center">
+                    <i class="fa-solid fa-inbox text-3xl text-[#716b61]/20 mb-3 block"></i>
+                    <p class="text-sm text-[#716b61]">No conversations yet.</p>
+                </div>
+
+                <a th:each="uname : ${chatUsernames}"
+                   th:href="@{/admin/chat/{u}(u=${uname})}"
+                   th:classappend="${selectedUser == uname} ? 'bg-primary/5 border-l-4 border-primary' : 'hover:bg-black/[0.03]'"
+                   th:attr="data-username=${uname}"
+                   class="conv-item flex items-center justify-between px-5 py-4 transition-colors border-b border-black/5">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-black uppercase text-white"
+                             th:text="${#strings.substring(uname,0,1)}">U</div>
+                        <div>
+                            <span class="text-sm font-bold text-primary block" th:text="${uname}">user</span>
+                            <span class="text-[10px] text-[#716b61]/60">Customer</span>
+                        </div>
+                    </div>
+                    <span th:if="${unreadMap[uname] > 0}"
+                          class="flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-[10px] font-black text-white"
+                          th:text="${unreadMap[uname]}">0</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- ── Chat pane ── -->
+        <div class="flex flex-1 flex-col">
+
+            <!-- No conversation selected -->
+            <div th:if="${selectedUser == null}"
+                 class="flex flex-1 items-center justify-center text-[#716b61]">
+                <div class="text-center">
+                    <div class="flex h-20 w-20 items-center justify-center rounded-full bg-primary/5 mx-auto mb-5">
+                        <i class="fa-solid fa-comments text-4xl text-primary/20"></i>
+                    </div>
+                    <p class="text-sm font-bold uppercase tracking-widest">Select a conversation</p>
+                    <p class="mt-2 text-xs text-[#716b61]/60">Choose a user from the sidebar</p>
+                </div>
+            </div>
+
+            <!-- Conversation open -->
+            <div th:if="${selectedUser != null}" class="flex flex-1 flex-col overflow-hidden">
+
+                <!-- Header -->
+                <div class="flex items-center gap-4 border-b border-black/10 px-8 py-4">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-black uppercase text-white"
+                         th:text="${#strings.substring(selectedUser,0,1)}">U</div>
+                    <div>
+                        <p class="font-black text-primary" th:text="${selectedUser}">username</p>
+                        <p class="text-xs text-[#716b61]">Customer</p>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div id="adminMessages" class="flex-1 space-y-4 overflow-y-auto p-8" style="scrollbar-width:thin;">
+                    <div th:each="msg : ${messages}"
+                         th:classappend="${msg.senderRole == 'ADMIN'} ? 'flex justify-end' : 'flex justify-start'"
+                         class="flex">
+                        <div th:classappend="${msg.senderRole == 'ADMIN'} ? 'bg-primary text-white' : 'bg-black/[0.04] text-primary'"
+                             class="max-w-sm rounded-2xl px-5 py-3"
+                             style="box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+                            <p class="text-sm leading-relaxed" th:text="${msg.content}"></p>
+                            <p th:classappend="${msg.senderRole == 'ADMIN'} ? 'text-white/50' : 'text-[#716b61]/60'"
+                               class="mt-1 text-[10px]"
+                               th:text="${#temporals.format(msg.sentAt, 'HH:mm')}"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input -->
+                <div class="border-t border-black/10 p-5">
+                    <div class="flex gap-3 items-end">
+                        <input id="adminInput" type="text" placeholder="Type a reply…" maxlength="1000"
+                               onkeydown="if(event.key==='Enter'){event.preventDefault();sendAdminReply();}"
+                               class="flex-1 border border-black/12 bg-black/[0.02] px-4 py-3 text-sm font-medium text-primary placeholder-[#716b61]/50 outline-none rounded-xl focus:border-primary/40 focus:bg-white"/>
+                        <button onclick="sendAdminReply()"
+                                class="editorial-button flex items-center gap-2"
+                                th:data-user="${selectedUser}">
+                            <i class="fa-solid fa-paper-plane text-sm"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- ── Scripts ── -->
+<script>
+function filterConvs() {
+    var q = document.getElementById('convSearch').value.toLowerCase();
+    document.querySelectorAll('.conv-item').forEach(function(el) {
+        var name = (el.getAttribute('data-username') || '').toLowerCase();
+        el.style.display = name.includes(q) ? '' : 'none';
+    });
+}
+</script>
+
+<th:block th:if="${selectedUser != null}">
+<script th:inline="javascript">
+(function() {
+    var selectedUser = /*[[${selectedUser}]]*/ '';
+    var lastMsgId = 0;
+    var feed = document.getElementById('adminMessages');
+
+    // Track last message ID from server-rendered messages
+    var rendered = feed.querySelectorAll('[class*="flex"]');
+    // We'll track by polling
+
+    function esc(s) {
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+    }
+
+    function addMsg(content, role, time) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'flex ' + (role === 'ADMIN' ? 'justify-end' : 'justify-start');
+        var bubble = document.createElement('div');
+        bubble.className = 'max-w-sm rounded-2xl px-5 py-3 ' +
+            (role === 'ADMIN' ? 'bg-primary text-white' : 'bg-black/[0.04] text-primary');
+        bubble.style.boxShadow = '0 1px 3px rgba(0,0,0,0.06)';
+        bubble.innerHTML = '<p class="text-sm leading-relaxed">' + esc(content) + '</p>' +
+            '<p class="mt-1 text-[10px] ' + (role === 'ADMIN' ? 'text-white/50' : 'text-[#716b61]/60') + '">' + time + '</p>';
+        wrapper.appendChild(bubble);
+        feed.appendChild(wrapper);
+        feed.scrollTop = feed.scrollHeight;
+    }
+
+    // ── Send reply via REST ──
+    window.sendAdminReply = function() {
+        var input = document.getElementById('adminInput');
+        var content = input.value.trim();
+        if (!content) return;
+        input.value = '';
+
+        var now = new Date();
+        var timeStr = ('0'+now.getHours()).slice(-2) + ':' + ('0'+now.getMinutes()).slice(-2);
+        addMsg(content, 'ADMIN', timeStr);
+
+        fetch('/admin/chat/' + selectedUser + '/reply', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'content=' + encodeURIComponent(content)
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(msg) {
+            if (msg.id && msg.id > lastMsgId) lastMsgId = msg.id;
+        })
+        .catch(function(e) { console.error('Failed to send reply', e); });
+    };
+
+    // ── Poll for new user messages (every 3s) ──
+    function pollMessages() {
+        fetch('/admin/chat/' + selectedUser + '/messages?afterId=' + lastMsgId)
+            .then(function(r) { return r.json(); })
+            .then(function(msgs) {
+                msgs.forEach(function(m) {
+                    if (m.senderRole === 'USER' && m.id > lastMsgId) {
+                        addMsg(m.content, m.senderRole, m.sentAt);
+                    }
+                    if (m.id > lastMsgId) lastMsgId = m.id;
+                });
+            })
+            .catch(function() {});
+    }
+
+    // Initialize lastMsgId by loading all messages once
+    fetch('/admin/chat/' + selectedUser + '/messages')
+        .then(function(r) { return r.json(); })
+        .then(function(msgs) {
+            msgs.forEach(function(m) {
+                if (m.id > lastMsgId) lastMsgId = m.id;
+            });
+        })
+        .then(function() {
+            // Start polling after initial load
+            setInterval(pollMessages, 3000);
+        });
+
+    // Scroll to bottom on load
+    feed.scrollTop = feed.scrollHeight;
+    document.getElementById('adminInput').focus();
+})();
+</script>
+</th:block>
+
+</body>
+</html>
