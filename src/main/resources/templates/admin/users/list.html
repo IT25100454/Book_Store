@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Manage Users', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="flex min-h-[calc(100vh-76px)]">
+        <aside th:replace="~{admin/layout :: sidebar}"></aside>
+        <main class="flex-1 overflow-x-hidden px-5 py-10 md:px-10 lg:px-14">
+            <div class="mx-auto max-w-7xl" data-aos="fade-up">
+                <a th:href="@{/admin}" class="text-sm font-black uppercase tracking-[0.16em] text-[#716b61] transition hover:text-accent"><i class="fa-solid fa-arrow-left mr-2"></i>Dashboard</a>
+                <h1 class="editorial-heading mt-5">Readers and roles.</h1>
+
+                <div class="mt-10 overflow-x-auto">
+                    <table class="premium-table min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="text-left">User</th>
+                                <th class="text-left">Role</th>
+                                <th class="text-left">Status</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="u : ${users}">
+                                <td>
+                                    <div class="flex items-center gap-4">
+                                        <div class="flex h-14 w-14 shrink-0 items-center justify-center border border-black/10 bg-primary font-serif text-2xl font-black text-white">
+                                            <span th:text="${#strings.substring(u.name, 0, 1)}">U</span>
+                                        </div>
+                                        <div>
+                                            <p class="font-serif text-2xl font-black leading-none text-primary" th:text="${u.name}">Name</p>
+                                            <p class="mt-2 text-sm text-[#716b61]"><span th:text="${u.email}">Email</span> / <span th:text="${u.username}">Username</span></p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span th:class="${u.role == 'ROLE_ADMIN' ? 'status-badge text-purple-700' : 'status-badge text-[#716b61]'}" th:text="${u.role}">ROLE</span>
+                                </td>
+                                <td>
+                                    <span th:class="${u.active ? 'status-badge text-green-700' : 'status-badge text-red-700'}" th:text="${u.active ? 'Active' : 'Inactive'}">Status</span>
+                                </td>
+                                <td class="text-right">
+                                    <div class="flex flex-wrap justify-end gap-2">
+                                        <form th:action="@{/admin/users/toggle-active}" method="post" th:if="${u.username != 'admin'}">
+                                            <input type="hidden" name="userId" th:value="${u.id}">
+                                            <button type="submit" class="ghost-button editorial-button min-h-0 px-3 py-2 text-xs">Toggle</button>
+                                        </form>
+                                        <form th:action="@{/admin/users/promote}" method="post" th:if="${u.role != 'ROLE_ADMIN'}">
+                                            <input type="hidden" name="userId" th:value="${u.id}">
+                                            <button type="submit" class="ghost-button editorial-button min-h-0 px-3 py-2 text-xs" onclick="return confirm('Promote this user to Admin?');">Make Admin</button>
+                                        </form>
+                                        <button th:data-user-id="${u.id}" th:data-user-name="${u.name}" onclick="confirmDeleteUser(this)" class="inline-flex min-h-0 items-center gap-2 border border-red-200 px-3 py-2 text-xs font-black uppercase tracking-[0.08em] text-red-700 transition hover:bg-red-700 hover:text-white">
+                                            <i class="fa-solid fa-trash"></i> Delete
+                                        </button>
+                                        <form th:id="'deleteUserForm-' + ${u.id}" th:action="@{/admin/users/delete/{id}(id=${u.id})}" method="post" style="display:none;"></form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <script>
+            function confirmDeleteUser(btn) {
+                var userId = btn.getAttribute('data-user-id');
+                var userName = btn.getAttribute('data-user-name');
+                Swal.fire({
+                    title: 'Delete User?',
+                    text: 'Are you sure you want to permanently delete ' + userName + '? This cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#991B1B',
+                    cancelButtonColor: '#716B61',
+                    confirmButtonText: 'Yes, Delete',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('deleteUserForm-' + userId).submit();
+                    }
+                });
+            }
+            </script>
+            <script th:if="${success}">document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon:'success', title:'Success', text:'[[${success}]]', timer:3000, showConfirmButton:false}); });</script>
+        </main>
+    </div>
+</body>
+</html>
