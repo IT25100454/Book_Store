@@ -1,0 +1,266 @@
+<!--
+  Chat Widget Fragment — Pure REST + AJAX Polling
+  Include in layout/base.html before </body>:
+    <div th:replace="~{fragments/chat-widget :: widget}"></div>
+  Only shown to authenticated, non-admin users.
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<div th:fragment="widget"
+     sec:authorize="isAuthenticated() and !hasAuthority('ROLE_ADMIN')"
+     id="chatWidget">
+
+    <!-- Floating toggle button -->
+    <button id="chatToggle" onclick="toggleChat()"
+            style="position:fixed; bottom:24px; right:24px; z-index:9999;
+                   width:56px; height:56px; border-radius:50%; border:none;
+                   background:#171512; color:#fff; cursor:pointer;
+                   box-shadow:0 4px 20px rgba(0,0,0,0.3); transition:transform 0.2s;
+                   display:flex; align-items:center; justify-content:center;">
+        <i class="fa-solid fa-comments" id="chatToggleIcon" style="font-size:20px;"></i>
+        <span id="chatBadge"
+              style="position:absolute; top:-4px; right:-4px; display:none;
+                     min-width:20px; height:20px; border-radius:10px;
+                     background:#9F6B3E; color:#fff; font-size:11px; font-weight:800;
+                     line-height:20px; text-align:center; padding:0 5px;">
+        </span>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="chatWindow"
+         style="position:fixed; bottom:96px; right:24px; z-index:9999;
+                width:340px; height:480px; display:none;
+                border-radius:16px; overflow:hidden;
+                background:#fff; border:1px solid rgba(0,0,0,0.1);
+                box-shadow:0 12px 40px rgba(0,0,0,0.2);
+                flex-direction:column;">
+
+        <!-- Header -->
+        <div style="background:#171512; padding:16px 20px; display:flex; align-items:center; justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.15);
+                            display:flex; align-items:center; justify-content:center;">
+                    <i class="fa-solid fa-headset" style="color:#fff; font-size:14px;"></i>
+                </div>
+                <div>
+                    <div style="font-family:'Playfair Display',serif; font-size:15px; font-weight:800; color:#fff;">
+                        PageTurner Support
+                    </div>
+                    <div id="chatStatus" style="font-size:11px; color:rgba(255,255,255,0.5);">
+                        Ready
+                    </div>
+                </div>
+            </div>
+            <button onclick="toggleChat()"
+                    style="background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer;
+                           width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;"
+                    onmouseover="this.style.background='rgba(255,255,255,0.1)'"
+                    onmouseout="this.style.background='none'">
+                <i class="fa-solid fa-xmark" style="font-size:16px;"></i>
+            </button>
+        </div>
+
+        <!-- Messages -->
+        <div id="chatMessages"
+             style="flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px;">
+            <!-- Welcome (shown when empty) -->
+            <div id="chatWelcome" style="text-align:center; padding:40px 16px; display:none;">
+                <div style="width:56px; height:56px; border-radius:50%; background:rgba(23,21,18,0.05);
+                            margin:0 auto 16px; display:flex; align-items:center; justify-content:center;">
+                    <i class="fa-solid fa-comments" style="font-size:22px; color:rgba(23,21,18,0.2);"></i>
+                </div>
+                <div style="font-size:14px; font-weight:700; color:#171512;">Welcome!</div>
+                <div style="font-size:12px; color:#716b61; margin-top:4px;">
+                    Send us a message and we'll reply shortly.
+                </div>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div style="border-top:1px solid rgba(0,0,0,0.08); padding:12px;">
+            <div style="display:flex; gap:8px; align-items:center;">
+                <input id="chatInput" type="text" placeholder="Type a message…" maxlength="500"
+                       onkeydown="if(event.key==='Enter'){event.preventDefault();sendUserMessage();}"
+                       oninput="document.getElementById('chatSendBtn').disabled=!this.value.trim()"
+                       style="flex:1; border:1px solid rgba(0,0,0,0.1); border-radius:12px;
+                              padding:10px 14px; font-size:13px; color:#171512; outline:none;
+                              background:rgba(0,0,0,0.02); font-family:Inter,sans-serif;"
+                       onfocus="this.style.borderColor='rgba(23,21,18,0.3)'"
+                       onblur="this.style.borderColor='rgba(0,0,0,0.1)'"/>
+                <button id="chatSendBtn" onclick="sendUserMessage()" disabled
+                        style="width:40px; height:40px; border-radius:12px; border:none;
+                               background:#171512; color:#fff; cursor:pointer;
+                               display:flex; align-items:center; justify-content:center;
+                               transition:opacity 0.2s; flex-shrink:0;"
+                        onmouseover="this.style.opacity='0.85'"
+                        onmouseout="this.style.opacity='1'">
+                    <i class="fa-solid fa-paper-plane" style="font-size:13px;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript" sec:authorize="isAuthenticated() and !hasAuthority('ROLE_ADMIN')">
+(function() {
+    var chatOpen = false;
+    var lastMsgId = 0;
+    var pollTimer = null;
+
+    // ── Escape HTML ──
+    function esc(s) {
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+    }
+
+    // ── Add message bubble ──
+    function addBubble(content, role, time) {
+        var w = document.getElementById('chatWelcome');
+        if (w) w.style.display = 'none';
+
+        var feed = document.getElementById('chatMessages');
+        var div = document.createElement('div');
+        var isUser = role === 'USER';
+        div.style.cssText = 'display:flex;' + (isUser ? 'justify-content:flex-end;' : 'justify-content:flex-start;');
+        div.innerHTML = '<div style="max-width:75%;padding:10px 14px;border-radius:14px;' +
+            (isUser
+                ? 'background:#171512;color:#fff;border-bottom-right-radius:4px;'
+                : 'background:rgba(0,0,0,0.04);color:#171512;border-bottom-left-radius:4px;') +
+            'box-shadow:0 1px 3px rgba(0,0,0,0.06);">' +
+            '<div style="font-size:13px;line-height:1.5;">' + esc(content) + '</div>' +
+            '<div style="font-size:10px;margin-top:4px;' +
+            (isUser ? 'color:rgba(255,255,255,0.45);text-align:right;' : 'color:#716b61;') + '">' +
+            time + '</div></div>';
+        feed.appendChild(div);
+        feed.scrollTop = feed.scrollHeight;
+    }
+
+    // ── Set badge count ──
+    function setBadge(count) {
+        var b = document.getElementById('chatBadge');
+        if (count > 0) {
+            b.textContent = count;
+            b.style.display = 'inline-block';
+        } else {
+            b.style.display = 'none';
+        }
+    }
+
+    // ── Toggle chat window ──
+    window.toggleChat = function() {
+        chatOpen = !chatOpen;
+        var win = document.getElementById('chatWindow');
+        var icon = document.getElementById('chatToggleIcon');
+        if (chatOpen) {
+            win.style.display = 'flex';
+            icon.className = 'fa-solid fa-xmark';
+            setBadge(0);
+            loadHistory();
+            document.getElementById('chatInput').focus();
+            startPolling();
+        } else {
+            win.style.display = 'none';
+            icon.className = 'fa-solid fa-comments';
+            stopPolling();
+        }
+    };
+
+    // ── Load full chat history ──
+    function loadHistory() {
+        fetch('/chat/history')
+            .then(function(r) { return r.json(); })
+            .then(function(msgs) {
+                var feed = document.getElementById('chatMessages');
+                var welcome = document.getElementById('chatWelcome');
+                // Clear except welcome
+                feed.innerHTML = '';
+                feed.appendChild(welcome);
+
+                lastMsgId = 0;
+                if (msgs.length === 0) {
+                    welcome.style.display = 'block';
+                } else {
+                    welcome.style.display = 'none';
+                    msgs.forEach(function(m) {
+                        addBubble(m.content, m.senderRole, m.sentAt);
+                        if (m.id > lastMsgId) lastMsgId = m.id;
+                    });
+                }
+            })
+            .catch(function(e) { console.error('Failed to load chat history', e); });
+    }
+
+    // ── Send message ──
+    window.sendUserMessage = function() {
+        var input = document.getElementById('chatInput');
+        var content = input.value.trim();
+        if (!content) return;
+        input.value = '';
+        document.getElementById('chatSendBtn').disabled = true;
+
+        // Optimistic: show bubble immediately
+        var now = new Date();
+        var timeStr = ('0'+now.getHours()).slice(-2) + ':' + ('0'+now.getMinutes()).slice(-2);
+        addBubble(content, 'USER', timeStr);
+
+        fetch('/chat/send', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'content=' + encodeURIComponent(content)
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(msg) {
+            if (msg.id && msg.id > lastMsgId) lastMsgId = msg.id;
+        })
+        .catch(function(e) { console.error('Failed to send message', e); });
+    };
+
+    // ── Poll for new messages (every 3 seconds when chat is open) ──
+    function pollNewMessages() {
+        if (!chatOpen) return;
+        fetch('/chat/messages?afterId=' + lastMsgId)
+            .then(function(r) { return r.json(); })
+            .then(function(msgs) {
+                msgs.forEach(function(m) {
+                    // Only show admin messages (user messages are already shown optimistically)
+                    if (m.senderRole === 'ADMIN' && m.id > lastMsgId) {
+                        addBubble(m.content, m.senderRole, m.sentAt);
+                    }
+                    if (m.id > lastMsgId) lastMsgId = m.id;
+                });
+            })
+            .catch(function() {});
+    }
+
+    function startPolling() {
+        stopPolling();
+        pollTimer = setInterval(pollNewMessages, 3000);
+    }
+
+    function stopPolling() {
+        if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+    }
+
+    // ── Poll unread count when chat is closed (every 30s) ──
+    function pollUnread() {
+        if (chatOpen) return;
+        fetch('/chat/unread-count')
+            .then(function(r) { return r.json(); })
+            .then(function(data) { setBadge(data.count); })
+            .catch(function() {});
+    }
+    setInterval(pollUnread, 30000);
+    pollUnread();
+
+    // Set initial status
+    document.getElementById('chatStatus').textContent = 'Online';
+    document.getElementById('chatStatus').style.color = 'rgba(110,231,183,0.9)';
+})();
+</script>
+
+</body>
+</html>

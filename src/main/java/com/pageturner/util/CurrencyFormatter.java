@@ -1,6 +1,7 @@
 package com.pageturner.util;
 
 import org.springframework.stereotype.Component;
+
 import java.text.DecimalFormat;
 
 @Component("currencyFormatter")
