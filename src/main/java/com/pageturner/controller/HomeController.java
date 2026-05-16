@@ -1,16 +1,14 @@
 package com.pageturner.controller;
 
-import com.pageturner.model.Author;
 import com.pageturner.model.Book;
-import com.pageturner.service.AuthorService;
 import com.pageturner.service.BookService;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,11 +17,9 @@ import java.util.stream.Collectors;
 public class HomeController {
 
     private final BookService bookService;
-    private final AuthorService authorService;
 
-    public HomeController(BookService bookService, AuthorService authorService) {
+    public HomeController(BookService bookService) {
         this.bookService = bookService;
-        this.authorService = authorService;
     }
 
     @GetMapping("/")
@@ -88,53 +84,5 @@ public class HomeController {
         }
         model.addAttribute("book", book);
         return "books/detail";
-    }
-
-    @GetMapping("/authors")
-    public String listAuthors(
-            @RequestParam(name = "search", required = false) String search,
-            @RequestParam(name = "nationality", required = false) String nationality,
-            @RequestParam(name = "sort", required = false) String sort,
-            Model model) {
-
-        List<Author> authors;
-
-        if (search != null && !search.isEmpty()) {
-            authors = authorService.searchAuthors(search);
-            model.addAttribute("searchQuery", search);
-        } else if (nationality != null && !nationality.isEmpty()) {
-            authors = authorService.getAuthorsByNationality(nationality);
-            model.addAttribute("selectedNationality", nationality);
-        } else {
-            authors = authorService.getAllAuthors();
-        }
-
-        if ("newest".equals(sort)) {
-            authors.sort((a1, a2) -> a2.getCreatedAt().compareTo(a1.getCreatedAt()));
-        } else if ("name".equals(sort)) {
-            authors.sort((a1, a2) -> a1.getName().compareToIgnoreCase(a2.getName()));
-        }
-
-        List<String> allNationalities = authorService.getAllAuthors().stream()
-                .map(Author::getNationality)
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
-
-        model.addAttribute("authors", authors);
-        model.addAttribute("allNationalities", allNationalities);
-        model.addAttribute("sort", sort);
-        return "authors/list";
-    }
-
-    @GetMapping("/authors/{id}")
-    public String authorDetail(@PathVariable("id") Long id, Model model) {
-        Author author = authorService.getAuthorById(id);
-        if (author == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Author not found with ID: " + id);
-        }
-        model.addAttribute("author", author);
-        model.addAttribute("booksByAuthor", bookService.getBooksByAuthor(author.getName()));
-        return "authors/detail";
     }
 }

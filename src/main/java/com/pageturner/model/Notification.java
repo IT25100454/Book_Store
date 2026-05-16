@@ -1,7 +1,6 @@
 package com.pageturner.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
