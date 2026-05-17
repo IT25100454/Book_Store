@@ -8,6 +8,7 @@ import com.pageturner.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
@@ -119,20 +120,21 @@ public class AdminController {
     // --- Author Management ---
 
     @GetMapping("/authors")
-    public String listAuthors(Model model, RedirectAttributes redirectAttributes) {
+    public ModelAndView listAuthors(Model model, RedirectAttributes redirectAttributes) {
         try {
+            ModelAndView modelAndView = new ModelAndView("admin/authors/list");
             model.addAttribute("authors", authorService.getAllAuthors());
-            return "admin/authors/list";
+            return modelAndView;
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Could not load authors: " + e.getMessage());
-            return "redirect:/admin";
+            return new ModelAndView("index");
         }
     }
 
     @GetMapping("/authors/add")
-    public String showAddAuthorForm(Model model) {
+    public ModelAndView showAddAuthorForm(Model model) {
         model.addAttribute("author", new Author());
-        return "admin/authors/form";
+        return new ModelAndView("admin/authors/form");
     }
 
     @PostMapping("/authors/save")
