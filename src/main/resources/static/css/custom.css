@@ -208,35 +208,12 @@ body.theme-dark-premium .editorial-heading {
     transition: transform 260ms ease, box-shadow 260ms ease, background 260ms ease, color 260ms ease;
 }
 
-.premium-link,
-.editorial-button,
-.scrollytelling-cta__button,
-.nav-link,
-.editorial-card,
-.book-stage,
-.scroll-top-button {
-    backface-visibility: hidden;
-    will-change: transform;
-}
-
 .premium-link:hover,
 .editorial-button:hover {
     background: var(--accent-color);
     border-color: var(--accent-color);
     transform: translateY(-3px);
     box-shadow: 0 18px 36px rgba(23, 21, 18, 0.18);
-}
-
-.premium-link i,
-.editorial-button i,
-.scrollytelling-cta__button span {
-    transition: transform 260ms cubic-bezier(.2, .7, .2, 1);
-}
-
-.premium-link:hover i,
-.editorial-button:hover i,
-.scrollytelling-cta__button:hover span {
-    transform: translate3d(0.18rem, 0, 0);
 }
 
 body.theme-modern-light .editorial-button,
@@ -991,7 +968,6 @@ body.theme-dark-premium select:focus {
             radial-gradient(circle at 18% 24%, rgba(176, 142, 99, 0.18), transparent 24rem),
             radial-gradient(circle at 78% 14%, rgba(120, 130, 152, 0.11), transparent 26rem),
             #050505;
-    transform-style: preserve-3d;
 }
 
 .scrollytelling-hero__mesh {
@@ -1003,7 +979,6 @@ body.theme-dark-premium select:focus {
             linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
     background-size: 72px 72px;
     mask-image: radial-gradient(circle at center, black 42%, transparent 90%);
-    will-change: transform, opacity;
 }
 
 .scrollytelling-hero__glow {
@@ -1014,8 +989,6 @@ body.theme-dark-premium select:focus {
     filter: blur(44px);
     opacity: 0.42;
     pointer-events: none;
-    will-change: transform, opacity;
-    animation: scrollytellingLightBreathe 9s ease-in-out infinite alternate;
 }
 
 .scrollytelling-hero__glow--left {
@@ -1028,103 +1001,6 @@ body.theme-dark-premium select:focus {
     right: -8%;
     bottom: -10%;
     background: rgba(95, 104, 126, 0.18);
-    animation-delay: -3.5s;
-}
-
-.scrollytelling-hero__grain {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.13;
-    background-image:
-            linear-gradient(115deg, transparent 0 36%, rgba(255, 255, 255, 0.08) 48%, transparent 62%),
-            radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px);
-    background-size: 240% 100%, 38px 38px;
-    mix-blend-mode: screen;
-    animation: scrollytellingGrainDrift 18s linear infinite;
-}
-
-.scrollytelling-constellation {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-    opacity: 0.82;
-    mix-blend-mode: screen;
-    contain: layout paint size;
-}
-
-.scrollytelling-constellation::before,
-.scrollytelling-constellation::after {
-    content: "";
-    position: absolute;
-    border-radius: 999px;
-    pointer-events: none;
-    filter: blur(28px);
-    opacity: 0.34;
-    transform: translate3d(0, 0, 0);
-    will-change: transform, opacity;
-}
-
-.scrollytelling-constellation::before {
-    width: clamp(13rem, 24vw, 28rem);
-    aspect-ratio: 1;
-    background: radial-gradient(circle, rgba(83, 215, 208, 0.22), rgba(83, 215, 208, 0) 68%);
-    animation: constellationPulse 8s ease-in-out infinite alternate;
-}
-
-.scrollytelling-constellation::after {
-    width: clamp(10rem, 18vw, 22rem);
-    aspect-ratio: 1;
-    background: radial-gradient(circle, rgba(159, 96, 255, 0.2), rgba(159, 96, 255, 0) 70%);
-    animation: constellationPulse 10s ease-in-out -4s infinite alternate-reverse;
-}
-
-.scrollytelling-constellation canvas {
-    position: absolute;
-    inset: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    opacity: 0.76;
-    transform: translate3d(0, 0, 0);
-    will-change: transform, opacity;
-}
-
-.scrollytelling-constellation--hero {
-    z-index: 2;
-    left: 48%;
-    width: 52%;
-    opacity: 0.9;
-    mask-image: radial-gradient(circle at 56% 48%, black 0 38%, rgba(0, 0, 0, 0.72) 58%, transparent 86%);
-}
-
-.scrollytelling-constellation--hero::before {
-    right: 17%;
-    top: 22%;
-}
-
-.scrollytelling-constellation--hero::after {
-    right: 4%;
-    bottom: 22%;
-}
-
-.scrollytelling-constellation--sequence {
-    z-index: 1;
-    opacity: 0.58;
-    mask-image: radial-gradient(circle at 54% 45%, black 0 42%, rgba(0, 0, 0, 0.58) 62%, transparent 92%);
-}
-
-.scrollytelling-constellation--sequence::before {
-    left: 12%;
-    top: 12%;
-    opacity: 0.2;
-}
-
-.scrollytelling-constellation--sequence::after {
-    right: 13%;
-    bottom: 12%;
-    opacity: 0.22;
 }
 
 .scrollytelling-hero__title {
@@ -1166,32 +1042,19 @@ body.theme-dark-premium select:focus {
     height: 100vh;
     overflow: hidden;
     background:
-        /*radial-gradient(circle at 50% 38%, rgba(176, 142, 99, 0.1), transparent 28rem),*/
+            radial-gradient(circle at 50% 38%, rgba(176, 142, 99, 0.1), transparent 28rem),
             #050505;
-    perspective: 1200px;
-    transform-style: preserve-3d;
 }
-
-/*.scrollytelling-sequence__sticky::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(180deg, rgba(5, 5, 5, 0.1) 0%, rgba(5, 5, 5, 0) 22%, rgba(5, 5, 5, 0.22) 100%),
-        linear-gradient(90deg, rgba(5, 5, 5, 0.08) 0%, rgba(5, 5, 5, 0) 18%, rgba(5, 5, 5, 0) 82%, rgba(5, 5, 5, 0.08) 100%);
-    pointer-events: none;
-    z-index: 1;
-}
-
- */
 
 .scrollytelling-sequence__sticky::before {
     content: "";
     position: absolute;
     inset: 0;
+    background:
+            linear-gradient(180deg, rgba(5, 5, 5, 0.1) 0%, rgba(5, 5, 5, 0) 22%, rgba(5, 5, 5, 0.22) 100%),
+            linear-gradient(90deg, rgba(5, 5, 5, 0.08) 0%, rgba(5, 5, 5, 0) 18%, rgba(5, 5, 5, 0) 82%, rgba(5, 5, 5, 0.08) 100%);
     pointer-events: none;
     z-index: 1;
-    background: transparent;
 }
 
 .scrollytelling-loader {
@@ -1204,54 +1067,6 @@ body.theme-dark-premium select:focus {
             radial-gradient(circle at center, rgba(19, 19, 19, 0.48), rgba(5, 5, 5, 0.98)),
             #050505;
     transition: opacity 420ms ease, visibility 420ms ease;
-}
-
-.scrollytelling-ambient {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    overflow: hidden;
-    mix-blend-mode: screen;
-}
-
-.scrollytelling-ambient__wash {
-    position: absolute;
-    inset-inline: -12%;
-    height: 44%;
-    opacity: 0.34;
-    filter: blur(18px);
-    background:
-            linear-gradient(100deg, transparent 0%, rgba(208, 170, 118, 0.18) 36%, rgba(95, 104, 126, 0.10) 64%, transparent 100%);
-    transform: translate3d(0, 0, 0);
-    will-change: transform, opacity;
-}
-
-.scrollytelling-ambient__wash--top {
-    top: -8%;
-}
-
-.scrollytelling-ambient__wash--bottom {
-    bottom: -10%;
-    opacity: 0.24;
-    transform: rotate(180deg);
-}
-
-.scrollytelling-ambient__grain {
-    position: absolute;
-    inset: 0;
-    opacity: 0.12;
-    background-image:
-            linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-            radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px);
-    background-size: 96px 96px, 96px 96px, 44px 44px;
-    mask-image: radial-gradient(circle at center, black 18%, transparent 78%);
-    will-change: transform;
-}
-
-.scrollytelling-ambient .scrollytelling-constellation {
-    inset: -6%;
 }
 
 .scrollytelling-loader.is-hidden {
@@ -1289,28 +1104,7 @@ body.theme-dark-premium select:focus {
     height: 100%;
     display: block;
     z-index: 0;
-    /*background: #050505;*/
-    background: transparent;
-    transform: translate3d(0, 0, 0);
-    transform-origin: center center;
-    will-change: transform, filter;
-    transition: filter 520ms ease;
-}
-
-.scrollytelling-book-shadow {
-    position: absolute;
-    left: 50%;
-    bottom: clamp(7rem, 13vh, 10rem);
-    z-index: 2;
-    width: min(46vw, 34rem);
-    height: min(12vw, 8rem);
-    border-radius: 999px;
-    pointer-events: none;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.64), rgba(0, 0, 0, 0.22) 44%, transparent 72%);
-    filter: blur(16px);
-    opacity: 0.38;
-    transform: translate3d(-50%, 0, 0) scale(0.92);
-    will-change: transform, opacity;
+    background: #050505;
 }
 
 .scrollytelling-overlay-wrap {
@@ -1329,28 +1123,12 @@ body.theme-dark-premium select:focus {
     transform: translate3d(0, 3rem, 0);
     transition: opacity 320ms ease, transform 420ms cubic-bezier(.2, .7, .2, 1);
     will-change: opacity, transform;
-    filter: blur(8px);
 }
 
 .scrollytelling-overlay.is-active,
 .scrollytelling-cta.is-active {
     opacity: 1;
     transform: translate3d(0, 0, 0);
-    filter: blur(0);
-}
-
-.scrollytelling-overlay > *,
-.scrollytelling-cta > * {
-    will-change: transform, opacity, filter;
-}
-
-.scrollytelling-overlay__whisper {
-    margin-top: 1rem;
-    color: rgba(208, 170, 118, 0.84);
-    font-size: clamp(0.82rem, 1.2vw, 0.95rem);
-    font-weight: 900;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
 }
 
 .scrollytelling-overlay h2 {
@@ -1398,13 +1176,8 @@ body.theme-dark-premium select:focus {
 }
 
 .scrollytelling-divider {
-    height: 150px;
-    background:
-            linear-gradient(180deg, #050505 0%, rgba(13, 17, 23, 0.96) 32%, rgba(246, 241, 232, 0.72) 76%, var(--paper) 100%);
-}
-
-.scrollytelling-reveal {
-    will-change: transform, opacity;
+    height: 120px;
+    background: linear-gradient(180deg, #050505 0%, #0d1117 34%, #f8faff 100%);
 }
 
 @keyframes scrollytellingBounce {
@@ -1413,37 +1186,6 @@ body.theme-dark-premium select:focus {
     }
     50% {
         transform: translateY(0.7rem);
-    }
-}
-
-@keyframes scrollytellingLightBreathe {
-    from {
-        opacity: 0.32;
-        transform: translate3d(-1.2rem, 0, 0) scale(0.96);
-    }
-    to {
-        opacity: 0.48;
-        transform: translate3d(1.1rem, -0.8rem, 0) scale(1.06);
-    }
-}
-
-@keyframes scrollytellingGrainDrift {
-    from {
-        background-position: 0 0, 0 0;
-    }
-    to {
-        background-position: 100% 0, 38px 38px;
-    }
-}
-
-@keyframes constellationPulse {
-    from {
-        opacity: 0.2;
-        transform: translate3d(-1rem, 0.6rem, 0) scale(0.94);
-    }
-    to {
-        opacity: 0.4;
-        transform: translate3d(1.2rem, -0.8rem, 0) scale(1.08);
     }
 }
 
@@ -1469,16 +1211,6 @@ body.theme-dark-premium select:focus {
 
     .scrollytelling-hero__title {
         font-size: clamp(3.8rem, 18vw, 6.4rem);
-    }
-
-    .scrollytelling-constellation--hero {
-        left: 18%;
-        width: 82%;
-        opacity: 0.5;
-    }
-
-    .scrollytelling-constellation--sequence {
-        opacity: 0.36;
     }
 
     .scrollytelling-overlay,
@@ -1802,16 +1534,4 @@ button:disabled {
         scroll-behavior: auto !important;
         transition-duration: 1ms !important;
     }
-}
-.scrollytelling-sequence__sticky::before,
-.scrollytelling-ambient,
-.scrollytelling-ambient__wash,
-.scrollytelling-ambient__grain,
-.scrollytelling-book-shadow {
-    display: none !important;
-}
-
-.scrollytelling-canvas {
-    filter: none !important;
-    opacity: 1 !important;
 }
