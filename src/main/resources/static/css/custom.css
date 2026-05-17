@@ -34,8 +34,8 @@ html {
 
 body {
     background:
-        radial-gradient(circle at 8% 0%, rgba(159, 107, 62, 0.11), transparent 28rem),
-        linear-gradient(180deg, var(--paper-soft), var(--paper));
+            radial-gradient(circle at 8% 0%, rgba(159, 107, 62, 0.11), transparent 28rem),
+            linear-gradient(180deg, var(--paper-soft), var(--paper));
     color: var(--text-color);
     font-family: 'Inter', sans-serif;
     text-rendering: optimizeLegibility;
@@ -49,8 +49,8 @@ body::before {
     z-index: 0;
     opacity: 0.32;
     background-image:
-        linear-gradient(rgba(23, 21, 18, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(23, 21, 18, 0.035) 1px, transparent 1px);
+            linear-gradient(rgba(23, 21, 18, 0.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(23, 21, 18, 0.035) 1px, transparent 1px);
     background-size: 48px 48px;
 }
 
@@ -78,8 +78,8 @@ body.theme-modern-light {
     --bg-color: #f7f8fb;
     --text-color: #18202a;
     background:
-        radial-gradient(circle at 12% -10%, rgba(111, 127, 99, 0.12), transparent 30rem),
-        linear-gradient(180deg, #ffffff, var(--paper));
+            radial-gradient(circle at 12% -10%, rgba(111, 127, 99, 0.12), transparent 30rem),
+            linear-gradient(180deg, #ffffff, var(--paper));
 }
 
 body.theme-minimal-editorial {
@@ -106,15 +106,15 @@ body.theme-dark-premium {
     --bg-color: #11100e;
     --text-color: #f4eadb;
     background:
-        radial-gradient(circle at 72% -10%, rgba(212, 163, 115, 0.18), transparent 28rem),
-        linear-gradient(180deg, #0b0b0a, var(--paper));
+            radial-gradient(circle at 72% -10%, rgba(212, 163, 115, 0.18), transparent 28rem),
+            linear-gradient(180deg, #0b0b0a, var(--paper));
 }
 
 body.theme-dark-premium::before {
     opacity: 0.18;
     background-image:
-        linear-gradient(rgba(244, 234, 219, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(244, 234, 219, 0.05) 1px, transparent 1px);
+            linear-gradient(rgba(244, 234, 219, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(244, 234, 219, 0.05) 1px, transparent 1px);
 }
 
 body.theme-minimal-editorial::before {
@@ -593,9 +593,9 @@ body.theme-dark-premium select:focus {
 
 .cinematic-reading {
     background:
-        radial-gradient(circle at 18% 22%, rgba(212, 163, 115, 0.22), transparent 26rem),
-        radial-gradient(circle at 82% 52%, rgba(111, 127, 99, 0.20), transparent 28rem),
-        linear-gradient(135deg, #0d0c0b 0%, #171512 48%, #090807 100%);
+            radial-gradient(circle at 18% 22%, rgba(212, 163, 115, 0.22), transparent 26rem),
+            radial-gradient(circle at 82% 52%, rgba(111, 127, 99, 0.20), transparent 28rem),
+            linear-gradient(135deg, #0d0c0b 0%, #171512 48%, #090807 100%);
     isolation: isolate;
 }
 
@@ -652,8 +652,8 @@ body.theme-dark-premium select:focus {
     inset: 0;
     opacity: 0.22;
     background-image:
-        radial-gradient(circle, color-mix(in srgb, var(--accent-color) 52%, transparent) 0 1px, transparent 2px),
-        radial-gradient(circle, color-mix(in srgb, var(--ink) 18%, transparent) 0 1px, transparent 2px);
+            radial-gradient(circle, color-mix(in srgb, var(--accent-color) 52%, transparent) 0 1px, transparent 2px),
+            radial-gradient(circle, color-mix(in srgb, var(--ink) 18%, transparent) 0 1px, transparent 2px);
     background-position: 0 0, 32px 28px;
     background-size: 92px 92px, 118px 118px;
     animation: particleDrift calc(24s / max(var(--motion-scale), 0.25)) linear infinite;
@@ -724,8 +724,8 @@ body.theme-dark-premium select:focus {
     z-index: 0;
     opacity: 0.24;
     background-image:
-        linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+            linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
     background-size: 64px 64px;
     mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
 }
@@ -988,9 +988,9 @@ body.theme-dark-premium select:focus {
 
 .scrollytelling-hero {
     background:
-        radial-gradient(circle at 18% 24%, rgba(176, 142, 99, 0.18), transparent 24rem),
-        radial-gradient(circle at 78% 14%, rgba(120, 130, 152, 0.11), transparent 26rem),
-        #050505;
+            radial-gradient(circle at 18% 24%, rgba(176, 142, 99, 0.18), transparent 24rem),
+            radial-gradient(circle at 78% 14%, rgba(120, 130, 152, 0.11), transparent 26rem),
+            #050505;
     transform-style: preserve-3d;
 }
 
@@ -999,8 +999,8 @@ body.theme-dark-premium select:focus {
     inset: 0;
     opacity: 0.26;
     background-image:
-        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
     background-size: 72px 72px;
     mask-image: radial-gradient(circle at center, black 42%, transparent 90%);
     will-change: transform, opacity;
@@ -1037,8 +1037,8 @@ body.theme-dark-premium select:focus {
     pointer-events: none;
     opacity: 0.13;
     background-image:
-        linear-gradient(115deg, transparent 0 36%, rgba(255, 255, 255, 0.08) 48%, transparent 62%),
-        radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px);
+            linear-gradient(115deg, transparent 0 36%, rgba(255, 255, 255, 0.08) 48%, transparent 62%),
+            radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px);
     background-size: 240% 100%, 38px 38px;
     mix-blend-mode: screen;
     animation: scrollytellingGrainDrift 18s linear infinite;
@@ -1166,13 +1166,13 @@ body.theme-dark-premium select:focus {
     height: 100vh;
     overflow: hidden;
     background:
-        radial-gradient(circle at 50% 38%, rgba(176, 142, 99, 0.1), transparent 28rem),
-        #050505;
+        /*radial-gradient(circle at 50% 38%, rgba(176, 142, 99, 0.1), transparent 28rem),*/
+            #050505;
     perspective: 1200px;
     transform-style: preserve-3d;
 }
 
-.scrollytelling-sequence__sticky::before {
+/*.scrollytelling-sequence__sticky::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -1183,6 +1183,17 @@ body.theme-dark-premium select:focus {
     z-index: 1;
 }
 
+ */
+
+.scrollytelling-sequence__sticky::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: transparent;
+}
+
 .scrollytelling-loader {
     position: absolute;
     inset: 0;
@@ -1190,8 +1201,8 @@ body.theme-dark-premium select:focus {
     display: grid;
     place-items: center;
     background:
-        radial-gradient(circle at center, rgba(19, 19, 19, 0.48), rgba(5, 5, 5, 0.98)),
-        #050505;
+            radial-gradient(circle at center, rgba(19, 19, 19, 0.48), rgba(5, 5, 5, 0.98)),
+            #050505;
     transition: opacity 420ms ease, visibility 420ms ease;
 }
 
@@ -1211,7 +1222,7 @@ body.theme-dark-premium select:focus {
     opacity: 0.34;
     filter: blur(18px);
     background:
-        linear-gradient(100deg, transparent 0%, rgba(208, 170, 118, 0.18) 36%, rgba(95, 104, 126, 0.10) 64%, transparent 100%);
+            linear-gradient(100deg, transparent 0%, rgba(208, 170, 118, 0.18) 36%, rgba(95, 104, 126, 0.10) 64%, transparent 100%);
     transform: translate3d(0, 0, 0);
     will-change: transform, opacity;
 }
@@ -1231,9 +1242,9 @@ body.theme-dark-premium select:focus {
     inset: 0;
     opacity: 0.12;
     background-image:
-        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px);
+            linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+            radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px);
     background-size: 96px 96px, 96px 96px, 44px 44px;
     mask-image: radial-gradient(circle at center, black 18%, transparent 78%);
     will-change: transform;
@@ -1278,7 +1289,8 @@ body.theme-dark-premium select:focus {
     height: 100%;
     display: block;
     z-index: 0;
-    background: #050505;
+    /*background: #050505;*/
+    background: transparent;
     transform: translate3d(0, 0, 0);
     transform-origin: center center;
     will-change: transform, filter;
@@ -1388,7 +1400,7 @@ body.theme-dark-premium select:focus {
 .scrollytelling-divider {
     height: 150px;
     background:
-        linear-gradient(180deg, #050505 0%, rgba(13, 17, 23, 0.96) 32%, rgba(246, 241, 232, 0.72) 76%, var(--paper) 100%);
+            linear-gradient(180deg, #050505 0%, rgba(13, 17, 23, 0.96) 32%, rgba(246, 241, 232, 0.72) 76%, var(--paper) 100%);
 }
 
 .scrollytelling-reveal {
@@ -1501,15 +1513,15 @@ button[type="button"].editorial-button {
     border-width: var(--border-width);
     border-style: solid;
     box-shadow:
-        0 calc(var(--shadow-strength) * 0.42px) calc(var(--shadow-strength) * 1.3px) rgba(15, 23, 42, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+            0 calc(var(--shadow-strength) * 0.42px) calc(var(--shadow-strength) * 1.3px) rgba(15, 23, 42, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.14);
     transform: translateZ(0);
     transition:
-        transform calc(180ms * var(--motion-scale)) ease,
-        box-shadow calc(220ms * var(--motion-scale)) ease,
-        border-color calc(180ms * var(--motion-scale)) ease,
-        background calc(180ms * var(--motion-scale)) ease,
-        color calc(180ms * var(--motion-scale)) ease;
+            transform calc(180ms * var(--motion-scale)) ease,
+            box-shadow calc(220ms * var(--motion-scale)) ease,
+            border-color calc(180ms * var(--motion-scale)) ease,
+            background calc(180ms * var(--motion-scale)) ease,
+            color calc(180ms * var(--motion-scale)) ease;
 }
 
 .btn-primary,
@@ -1559,8 +1571,8 @@ button[type="button"].editorial-button {
 button[type="submit"]:hover {
     transform: translateY(-2px);
     box-shadow:
-        0 calc(var(--shadow-strength) * 0.7px) calc(var(--shadow-strength) * 1.8px) rgba(15, 23, 42, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.16);
+            0 calc(var(--shadow-strength) * 0.7px) calc(var(--shadow-strength) * 1.8px) rgba(15, 23, 42, 0.18),
+            inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
 .btn:active,
@@ -1790,4 +1802,16 @@ button:disabled {
         scroll-behavior: auto !important;
         transition-duration: 1ms !important;
     }
+}
+.scrollytelling-sequence__sticky::before,
+.scrollytelling-ambient,
+.scrollytelling-ambient__wash,
+.scrollytelling-ambient__grain,
+.scrollytelling-book-shadow {
+    display: none !important;
+}
+
+.scrollytelling-canvas {
+    filter: none !important;
+    opacity: 1 !important;
 }

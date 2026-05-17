@@ -28,14 +28,22 @@ public class AdminController {
     private final UserService userService;
     private final ReportService reportService;
     private final NotificationService notificationService;
+    private final EmailNotificationService emailNotificationService;
 
-    public AdminController(BookService bookService, AuthorService authorService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService) {
+    public AdminController(BookService bookService,
+                           AuthorService authorService,
+                           OrderService orderService,
+                           UserService userService,
+                           ReportService reportService,
+                           NotificationService notificationService,
+                           EmailNotificationService emailNotificationService) {
         this.bookService = bookService;
         this.authorService = authorService;
         this.orderService = orderService;
         this.userService = userService;
         this.reportService = reportService;
         this.notificationService = notificationService;
+        this.emailNotificationService = emailNotificationService;
     }
 
     @GetMapping
@@ -191,6 +199,11 @@ public class AdminController {
                 if (!updatedOrder.getStatus().equals(previousStatus)) {
                     try {
                         notificationService.notifyOrderStatusChange(updatedOrder);
+                        emailNotificationService.sendOrderStatusEmail(
+                                updatedOrder,
+                                "Order Status Updated - #" + updatedOrder.getOrderNumber(),
+                                "Your order status has been updated to " + updatedOrder.getStatus() + "."
+                        );
                     } catch (Exception notificationError) {
                         System.err.println("Order status notification failed for order #" + updatedOrder.getOrderNumber() + ": " + notificationError.getMessage());
                     }
