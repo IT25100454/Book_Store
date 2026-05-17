@@ -123,7 +123,6 @@ public class AdminController {
 
     // --- Author Management ---
     @GetMapping("/authors")
-<<<<<<< Updated upstream
     public String listAuthors(Model model, RedirectAttributes redirectAttributes) {
         try {
             model.addAttribute("authors", authorService.getAllAuthors());
@@ -138,15 +137,6 @@ public class AdminController {
     public String showAddAuthorForm(Model model) {
         model.addAttribute("author", new Author());
         return "admin/authors/form";
-=======
-    public ModelAndView listAuthors(Model model, RedirectAttributes redirectAttributes) {
-        return authorController.listAuthors(model,redirectAttributes);
-    }
-
-    @GetMapping("/authors/add")
-    public ModelAndView showAddAuthorForm(Model model) {
-        return authorController.showAddAuthorForm(model);
->>>>>>> Stashed changes
     }
 
     @PostMapping("/authors/save")
