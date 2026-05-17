@@ -1,6 +1,7 @@
 package com.pageturner.service;
 
 import com.pageturner.model.User;
+
 import java.util.List;
 
 public interface UserService {
