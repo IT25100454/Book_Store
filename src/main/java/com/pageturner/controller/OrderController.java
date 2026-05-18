@@ -1,7 +1,6 @@
 package com.pageturner.controller;
 
 import com.pageturner.model.CartItem;
-import com.pageturner.model.Order;
 import com.pageturner.model.OrderItem;
 import com.pageturner.model.User;
 import com.pageturner.service.EmailNotificationService;
