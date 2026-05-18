@@ -18,7 +18,7 @@ public class Author extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String bio;
 
-    @Size(max = 510, message = "Photo URL cannot exceed 510 characters")
+    //@Size(max = 510, message = "Photo URL cannot exceed 510 characters")
     @Column(name = "photoUrl", length = 510)
     private String photoUrl;
 
