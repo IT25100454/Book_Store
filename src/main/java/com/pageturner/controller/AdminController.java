@@ -24,19 +24,19 @@ public class AdminController {
             Arrays.asList("Pending", "Processing", "Shipped", "Delivered", "Cancelled");
 
     private final BookService bookService;
-    private final AuthorService authorService;
     private final OrderService orderService;
     private final UserService userService;
     private final ReportService reportService;
     private final NotificationService notificationService;
+    private  final AuthorController authorController;
 
-    public AdminController(BookService bookService, AuthorService authorService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService) {
+    public AdminController(BookService bookService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService, AuthorController authorController) {
         this.bookService = bookService;
-        this.authorService = authorService;
         this.orderService = orderService;
         this.userService = userService;
         this.reportService = reportService;
         this.notificationService = notificationService;
+        this.authorController = authorController;
     }
 
     @GetMapping
@@ -118,54 +118,31 @@ public class AdminController {
     }
 
     // --- Author Management ---
-
     @GetMapping("/authors")
     public ModelAndView listAuthors(Model model, RedirectAttributes redirectAttributes) {
-        try {
-            ModelAndView modelAndView = new ModelAndView("admin/authors/list");
-            model.addAttribute("authors", authorService.getAllAuthors());
-            return modelAndView;
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Could not load authors: " + e.getMessage());
-            return new ModelAndView("index");
-        }
+        return authorController.listAuthors(model, redirectAttributes);
     }
 
     @GetMapping("/authors/add")
     public ModelAndView showAddAuthorForm(Model model) {
-        model.addAttribute("author", new Author());
-        return new ModelAndView("admin/authors/form");
+        return authorController.showAddAuthorForm(model);
     }
 
     @PostMapping("/authors/save")
     public String saveAuthor(@ModelAttribute Author author, RedirectAttributes redirectAttributes) {
-        authorService.saveAuthor(author);
-        redirectAttributes.addFlashAttribute("success", "Author saved successfully.");
-        return "redirect:/admin/authors";
+        return authorController.saveAuthor(author, redirectAttributes);
     }
 
     @GetMapping("/authors/edit/{id}")
     public String showEditAuthorForm(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
-        try {
-            model.addAttribute("author", authorService.getAuthorById(id));
-            return "admin/authors/form";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Could not load author: " + e.getMessage());
-            return "redirect:/admin/authors";
-        }
+        return authorController.showEditAuthorForm(id, model, redirectAttributes);
     }
 
     @GetMapping("/authors/delete/{id}")
     public String deleteAuthor(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        try {
-            authorService.deleteAuthor(id);
-            redirectAttributes.addFlashAttribute("success", "Author deleted successfully.");
-        } catch(Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Cannot delete author.");
-        }
-        return "redirect:/admin/authors";
+        return authorController.deleteAuthor(id, redirectAttributes);
     }
-
+    
     // --- Order Management ---
 
     @GetMapping("/orders")
