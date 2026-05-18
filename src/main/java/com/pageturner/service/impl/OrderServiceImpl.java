@@ -6,7 +6,6 @@ import com.pageturner.model.OrderItem;
 import com.pageturner.model.User;
 import com.pageturner.repository.BookRepository;
 import com.pageturner.repository.OrderRepository;
-import com.pageturner.service.OrderService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
