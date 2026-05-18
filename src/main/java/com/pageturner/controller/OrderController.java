@@ -4,11 +4,11 @@ import com.pageturner.model.CartItem;
 import com.pageturner.model.Order;
 import com.pageturner.model.OrderItem;
 import com.pageturner.model.User;
+import com.pageturner.service.EmailNotificationService;
+import com.pageturner.service.NotificationService;
 import com.pageturner.service.OrderService;
 import com.pageturner.service.UserService;
 import jakarta.servlet.http.HttpSession;
-import com.pageturner.service.EmailNotificationService;
-import com.pageturner.service.NotificationService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,18 +51,18 @@ public class OrderController {
         if (cart == null || cart.isEmpty()) {
             return "redirect:/cart";
         }
-        
+
         User user = userService.findByUsername(authentication.getName());
         if (user == null) {
             return "redirect:/login";
         }
         model.addAttribute("user", user);
-        
+
         BigDecimal total = cart.stream()
                 .map(item -> item.getBook().getPrice().multiply(new BigDecimal(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         model.addAttribute("total", total);
-        
+
         return "orders/checkout";
     }
 
@@ -72,44 +72,44 @@ public class OrderController {
         if (cart == null || cart.isEmpty()) {
             return "redirect:/cart";
         }
-        
+
         User user = userService.findByUsername(authentication.getName());
         if (user == null) {
             redirectAttributes.addFlashAttribute("error", "User account not found.");
             return "redirect:/login";
         }
-        
+
         Order order = new Order();
         order.setShippingAddress(shippingAddress);
-        
+
         BigDecimal total = BigDecimal.ZERO;
-        
+
         for (CartItem item : cart) {
             OrderItem orderItem = new OrderItem();
             orderItem.setBook(item.getBook());
             orderItem.setQuantity(item.getQuantity());
             orderItem.setPrice(item.getBook().getPrice());
             order.addItem(orderItem);
-            
+
             total = total.add(item.getBook().getPrice().multiply(new BigDecimal(item.getQuantity())));
         }
         order.setTotalAmount(total);
-        
+
         try {
             Order savedOrder = orderService.createOrder(user, order);
-            
+
             // Notifications
             notificationService.notifyOrderPlaced(savedOrder);
             emailNotificationService.sendOrderConfirmationEmail(savedOrder);
-            
+
             // Notify all admins
             userService.getAllUsers().stream()
-                .filter(u -> "ROLE_ADMIN".equals(u.getRole()))
-                .forEach(admin -> notificationService.notifyAdminNewOrder(savedOrder, admin));
+                    .filter(u -> "ROLE_ADMIN".equals(u.getRole()))
+                    .forEach(admin -> notificationService.notifyAdminNewOrder(savedOrder, admin));
 
             // Clear cart
             session.setAttribute("cart", null);
-            
+
             return "redirect:/checkout/confirmation/" + savedOrder.getOrderNumber();
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

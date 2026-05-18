@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: html(title='Browse Authors', content=~{::content})}">
+<body>
+    <div th:fragment="content" class="editorial-shell py-16 lg:py-24">
+        <section class="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-end" data-aos="fade-up">
+            <div>
+                <p class="section-kicker">Authors</p>
+                <h1 class="editorial-heading mt-6">
+                    <span th:if="${selectedNationality}" th:text="${selectedNationality}"></span>
+                    <span th:if="${searchQuery}" th:text="'Search: ' + ${searchQuery}"></span>
+                    <span th:if="${selectedNationality == null and searchQuery == null}">All authors</span>
+                </h1>
+            </div>
+            <div class="glass-panel p-5">
+                <form th:action="@{/authors}" method="get" class="grid gap-3 md:grid-cols-[1fr_auto_auto]">
+                    <div class="relative">
+                        <input type="text" name="search" th:value="${searchQuery}" placeholder="Search author" class="premium-input w-full pl-11 pr-4">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[#716b61]"></i>
+                    </div>
+                    <select name="nationality" class="premium-input min-w-44" onchange="this.form.submit()">
+                        <option value="">All Nationalities</option>
+                        <option th:each="n : ${allNationalities}" th:value="${n}" th:text="${n}" th:selected="${selectedNationality == n}"></option>
+                    </select>
+                    <select name="sort" class="premium-input min-w-44" onchange="this.form.submit()">
+                        <option value="">Sort By</option>
+                        <option value="newest" th:selected="${sort == 'newest'}">Newest</option>
+                        <option value="name" th:selected="${sort == 'name'}">Name A-Z</option>
+                    </select>
+                </form>
+            </div>
+        </section>
+
+        <div th:if="${#lists.isEmpty(authors)}" class="mt-16 border border-black/10 bg-paper p-16 text-center" data-aos="fade-up">
+            <i class="fa-solid fa-feather-pointed text-5xl text-accent"></i>
+            <h3 class="mt-8 font-serif text-5xl font-black text-primary">No authors found.</h3>
+            <p class="mx-auto mt-4 max-w-md leading-7 text-[#716b61]">Try another name or nationality. The reading world is wider than this filter.</p>
+            <a th:href="@{/authors}" class="editorial-button mt-8">Clear filters</a>
+        </div>
+
+        <section class="mt-20 lg:mt-24">
+            <div class="grid gap-x-12 gap-y-20 md:grid-cols-2 xl:grid-cols-3">
+                <article th:each="author, iterStat : ${authors}" class="group grid gap-6 border-t border-black/10 pt-8" data-aos="fade-up" th:attr="data-aos-delay=${(iterStat.index % 3) * 70}">
+                    <a th:href="@{/authors/{id}(id=${author.id})}" class="mx-auto block h-44 w-44 overflow-hidden rounded-full bg-[#dccbb2] p-2">
+                        <img th:src="${author.photoUrl}" alt="Author Photo" class="h-full w-full rounded-full object-cover transition duration-500 group-hover:scale-105" onerror="this.src='/images/book-placeholder.png'">
+                    </a>
+                    <div class="text-center">
+                        <p class="text-xs font-black uppercase tracking-[0.18em] text-accent" th:text="${author.nationality}">Nationality</p>
+                        <h2 class="mt-4 font-serif text-3xl font-black leading-none text-primary">
+                            <a th:href="@{/authors/{id}(id=${author.id})}" class="transition hover:text-accent" th:text="${author.name}">Name</a>
+                        </h2>
+                        <p class="mx-auto mt-5 line-clamp-3 max-w-md text-sm leading-6 text-[#5f584d]" th:text="${author.bio}">Bio</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

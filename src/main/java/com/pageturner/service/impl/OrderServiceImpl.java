@@ -7,10 +7,8 @@ import com.pageturner.model.User;
 import com.pageturner.repository.BookRepository;
 import com.pageturner.repository.OrderRepository;
 import com.pageturner.service.OrderService;
-import org.springframework.http.HttpStatus;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -20,6 +18,7 @@ import java.util.UUID;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
     private static final List<String> ALLOWED_STATUSES =
             Arrays.asList("Pending", "Processing", "Shipped", "Delivered", "Cancelled");
 
@@ -37,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
         orderDetails.setUser(user);
         orderDetails.setOrderNumber(UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         orderDetails.setStatus("Pending");
-        
+
         // Deduct stock
         for (OrderItem item : orderDetails.getItems()) {
             Book book = item.getBook();
@@ -55,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> getUserOrders(User user) {
         return orderRepository.findByUserWithItemsAndBooks(user);
     }
-    
+
     @Override
     public List<Order> getAllOrders() {
         return orderRepository.findAllWithUserAndItems();
