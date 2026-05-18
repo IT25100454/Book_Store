@@ -1,12 +1,16 @@
 package com.pageturner.service.impl;
 
 import com.pageturner.model.Book;
+import com.pageturner.model.Order;
 import com.pageturner.model.OrderItem;
 import com.pageturner.model.User;
 import com.pageturner.repository.BookRepository;
 import com.pageturner.repository.OrderRepository;
+import com.pageturner.service.OrderService;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
