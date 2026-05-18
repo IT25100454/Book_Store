@@ -2,7 +2,9 @@ package com.pageturner.service.impl;
 
 import com.pageturner.model.Author;
 import com.pageturner.repository.AuthorRepository;
+
 import com.pageturner.service.AuthorService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +35,15 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     @Transactional
     public Author saveAuthor(Author author) {
+
+        if (author.getPhotoUrl() != null &&
+                author.getPhotoUrl().length() > 510) {
+
+            throw new IllegalArgumentException(
+                    "\n\nPhoto URL is greater than 510 characters"
+            );
+        }
+
         return authorRepository.save(author);
     }
 

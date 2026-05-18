@@ -142,9 +142,8 @@ public class AdminController {
     public String deleteAuthor(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         return authorController.deleteAuthor(id, redirectAttributes);
     }
-    
-    // --- Order Management ---
 
+    // --- Order Management ---
     @GetMapping("/orders")
     public String listOrders(Model model, RedirectAttributes redirectAttributes) {
         try {
