@@ -46,7 +46,7 @@
                     <div class="text-center">
                         <p class="text-xs font-black uppercase tracking-[0.18em] text-accent" th:text="${author.nationality}">Nationality</p>
                         <h2 class="mt-4 font-serif text-3xl font-black leading-none text-primary">
-                            <a th:href="@{/authors/{id}(id=${author.id})}" class="transition hover:text-red-500" th:text="${author.name}">Name</a>
+                            <a th:href="@{/authors/{id}(id=${author.id})}" class="transition hover:text-accent" th:text="${author.name}">Name</a>
                         </h2>
                         <p class="mx-auto mt-5 line-clamp-3 max-w-md text-sm leading-6 text-[#5f584d]" th:text="${author.bio}">Bio</p>
                     </div>
