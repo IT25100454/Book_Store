@@ -66,33 +66,33 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void notifyWelcome(User user) {
         createNotification(user,
-            "Welcome to PageTurner! 📚",
-            "Hi " + user.getName() + "! Your account is ready. Start exploring our collection!",
-            "WELCOME", "/books");
+                "Welcome to PageTurner! 📚",
+                "Hi " + user.getName() + "! Your account is ready. Start exploring our collection!",
+                "WELCOME", "/books");
     }
 
     @Override
     public void notifyOrderPlaced(Order order) {
         createNotification(order.getUser(),
-            "Order Placed Successfully! 🎉",
-            "Your order #" + order.getOrderNumber() + " for Rs. " + order.getTotalAmount() + " has been placed. We'll process it shortly!",
-            "NEW_ORDER", "/orders/" + order.getId());
+                "Order Placed Successfully! 🎉",
+                "Your order #" + order.getOrderNumber() + " for Rs. " + order.getTotalAmount() + " has been placed. We'll process it shortly!",
+                "NEW_ORDER", "/orders/" + order.getId());
     }
 
     @Override
     public void notifyAdminNewOrder(Order order, User adminUser) {
         createNotification(adminUser,
-            "New Order Received 🛒",
-            "Order #" + order.getOrderNumber() + " placed by " + order.getUser().getName() + " for Rs. " + order.getTotalAmount(),
-            "NEW_ORDER", "/admin/orders");
+                "New Order Received 🛒",
+                "Order #" + order.getOrderNumber() + " placed by " + order.getUser().getName() + " for Rs. " + order.getTotalAmount(),
+                "NEW_ORDER", "/admin/orders");
     }
 
     @Override
     public void notifyAdminLowStock(Book book, User adminUser) {
         createNotification(adminUser,
-            "Low Stock Alert ⚠️",
-            "'" + book.getTitle() + "' only has " + book.getStockQuantity() + " copies left. Consider restocking soon.",
-            "LOW_STOCK", "/admin/books");
+                "Low Stock Alert ⚠️",
+                "'" + book.getTitle() + "' only has " + book.getStockQuantity() + " copies left. Consider restocking soon.",
+                "LOW_STOCK", "/admin/books");
     }
 
     @Override
