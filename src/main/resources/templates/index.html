@@ -158,6 +158,60 @@
             </div>
         </section>
 
+        <!-- Feedback Section — insert after the closing </section> of New Arrivals -->
+<section class="editorial-shell py-24 lg:py-32">
+    <div class="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+
+        <div data-aos="fade-up">
+            <p class="section-kicker">Reader voices</p>
+            <h2 class="editorial-heading mt-6">Tell us what<br>you think.</h2>
+            <p class="mt-6 max-w-xl text-lg leading-8 text-[#5f584d]">
+                Every review, suggestion, or note helps PageTurner grow a better shelf. Share a thought about a book you've read or the experience of browsing.
+            </p>
+            <div class="mt-10 flex flex-wrap gap-4">
+                <a th:href="@{/feedback/submit}" class="editorial-button px-8">
+                    Share feedback <i class="fa-solid fa-arrow-right ml-1"></i>
+                </a>
+                <a th:href="@{/feedback/my-feedback}" class="ghost-button editorial-button px-8"
+                   sec:authorize="isAuthenticated()">
+                    My submissions
+                </a>
+            </div>
+        </div>
+
+        <div class="grid lg:divide-y lg:divide-black/10" data-aos="fade-up" data-aos-delay="100">
+            <div class="flex items-start gap-5 lg:py-7">
+                <span class="flex h-11 w-11 shrink-0 items-center justify-center border border-black/10 bg-[rgba(251,248,241,0.68)]">
+                    <i class="fa-solid fa-star text-accent"></i>
+                </span>
+                <div>
+                    <h3 class="font-serif text-xl font-black text-primary">Rate a book</h3>
+                    <p class="mt-1 text-sm leading-6 text-[#716b61]">Give a star rating and help other readers find their next great read.</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-5 lg:py-7">
+                <span class="flex h-11 w-11 shrink-0 items-center justify-center border border-black/10 bg-[rgba(251,248,241,0.68)]">
+                    <i class="fa-solid fa-lightbulb text-accent"></i>
+                </span>
+                <div>
+                    <h3 class="font-serif text-xl font-black text-primary">Suggest a title</h3>
+                    <p class="mt-1 text-sm leading-6 text-[#716b61]">Know a book we're missing? Let us know and we'll look into adding it.</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-5 lg:py-7">
+                <span class="flex h-11 w-11 shrink-0 items-center justify-center border border-black/10 bg-[rgba(251,248,241,0.68)]">
+                    <i class="fa-solid fa-reply text-accent"></i>
+                </span>
+                <div>
+                    <h3 class="font-serif text-xl font-black text-primary">We reply</h3>
+                    <p class="mt-1 text-sm leading-6 text-[#716b61]">Our team reads every submission and responds within 2 business days.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
         <section class="editorial-shell grid gap-12 py-24 lg:grid-cols-[1fr_1.2fr] lg:py-32">
             <div data-aos="fade-up">
                 <p class="section-kicker">Reading culture</p>
@@ -259,7 +313,7 @@
 
         <section class="editorial-shell py-24 lg:py-36">
             <blockquote class="mx-auto max-w-6xl text-center" data-aos="fade-up">
-                <p class="font-serif text-5xl font-black leading-none text-primary md:text-7xl lg:text-8xl">“A reader lives a thousand lives before he dies.”</p>
+                <p class="font-serif text-5xl font-black leading-none text-primary md:text-7xl lg:text-8xl">"A reader lives a thousand lives before he dies."</p>
                 <footer class="mt-8 text-sm font-black uppercase tracking-[0.18em] text-accent">George R. R. Martin</footer>
             </blockquote>
         </section>

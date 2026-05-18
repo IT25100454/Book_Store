@@ -43,41 +43,105 @@ public class Feedback extends BaseEntity {
     @Column
     private LocalDateTime repliedAt;
 
-    @Column(nullable = true)   // rating is optional
+    @Column(nullable = true)
     private Integer rating;
 
     @Column(nullable = false)
     private Boolean anonymous = false;
 
+    // NEW FIELD
+    @Column(nullable = false)
+    private Boolean published = false;
+
     // Getters & Setters
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public User getUser() {
+        return user;
+    }
 
-    public Book getBook() { return book; }
-    public void setBook(Book book) { this.book = book; }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-    public FeedbackType getType() { return type; }
-    public void setType(FeedbackType type) { this.type = type; }
+    public Book getBook() {
+        return book;
+    }
 
-    public FeedbackStatus getStatus() { return status; }
-    public void setStatus(FeedbackStatus status) { this.status = status; }
+    public void setBook(Book book) {
+        this.book = book;
+    }
 
-    public String getSubject() { return subject; }
-    public void setSubject(String subject) { this.subject = subject; }
+    public FeedbackType getType() {
+        return type;
+    }
 
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+    public void setType(FeedbackType type) {
+        this.type = type;
+    }
 
-    public String getAdminReply() { return adminReply; }
-    public void setAdminReply(String adminReply) { this.adminReply = adminReply; }
+    public FeedbackStatus getStatus() {
+        return status;
+    }
 
-    public LocalDateTime getRepliedAt() { return repliedAt; }
-    public void setRepliedAt(LocalDateTime repliedAt) { this.repliedAt = repliedAt; }
+    public void setStatus(FeedbackStatus status) {
+        this.status = status;
+    }
 
-    public Integer getRating() { return rating; }
-    public void setRating(Integer rating) { this.rating = rating; }
+    public String getSubject() {
+        return subject;
+    }
 
-    public Boolean getAnonymous() { return anonymous; }
-    public void setAnonymous(Boolean anonymous) { this.anonymous = anonymous; }
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getAdminReply() {
+        return adminReply;
+    }
+
+    public void setAdminReply(String adminReply) {
+        this.adminReply = adminReply;
+    }
+
+    public LocalDateTime getRepliedAt() {
+        return repliedAt;
+    }
+
+    public void setRepliedAt(LocalDateTime repliedAt) {
+        this.repliedAt = repliedAt;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
+    public Boolean getAnonymous() {
+        return anonymous;
+    }
+
+    public void setAnonymous(Boolean anonymous) {
+        this.anonymous = anonymous;
+    }
+
+    // NEW GETTER & SETTER
+
+    public Boolean getPublished() {
+        return published;
+    }
+
+    public void setPublished(Boolean published) {
+        this.published = published;
+    }
 }

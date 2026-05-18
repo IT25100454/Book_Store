@@ -4,6 +4,7 @@ import com.pageturner.model.Feedback;
 import com.pageturner.model.Feedback.FeedbackStatus;
 import com.pageturner.model.Feedback.FeedbackType;
 import com.pageturner.model.User;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,13 +19,19 @@ public interface FeedbackService {
 
     Page<Feedback> getAll(Pageable pageable);
 
-    Page<Feedback> getFiltered(FeedbackStatus status, FeedbackType type, Pageable pageable);
+    Page<Feedback> getFiltered(
+            FeedbackStatus status,
+            FeedbackType type,
+            Pageable pageable
+    );
 
     Optional<Feedback> findById(Long id);
 
     Feedback reply(Long id, String adminReply);
 
     Feedback updateStatus(Long id, FeedbackStatus status);
+
+    Feedback save(Feedback feedback);
 
     void delete(Long id);
 

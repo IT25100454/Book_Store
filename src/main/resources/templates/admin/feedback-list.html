@@ -57,61 +57,145 @@
         <div th:unless="${feedbackPage.isEmpty()}" class="overflow-x-auto">
             <table class="premium-table w-full min-w-[800px]">
                 <thead>
-                    <tr>
-                        <th class="text-left">#</th>
-                        <th class="text-left">Subject</th>
-                        <th class="text-left">Type</th>
-                        <th class="text-left">Status</th>
-                        <th class="text-left">Rating</th>
-                        <th class="text-left">User</th>
-                        <th class="text-left">Date</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="fb : ${feedbackPage.content}">
-                        <td class="text-xs text-[#716b61]" th:text="${fb.id}">1</td>
-                        <td>
-                            <p class="font-semibold text-primary" th:text="${#strings.abbreviate(fb.subject, 48)}">Subject</p>
-                            <p class="mt-0.5 text-xs text-[#716b61]" th:text="${#strings.abbreviate(fb.message, 72)}">Message preview</p>
-                        </td>
-                        <td>
-                            <span class="status-badge border-[rgba(159,107,62,0.4)] text-accent text-[10px]"
-                                  th:text="${fb.type.name().replace('_',' ')}">TYPE</span>
-                        </td>
-                        <td>
-                            <span th:class="${'status-badge text-[10px] ' +
-                                (fb.status.name() == 'PENDING'   ? 'border-yellow-500/40 text-yellow-700' :
-                                 fb.status.name() == 'REVIEWED'  ? 'border-blue-500/40 text-blue-700' :
-                                 fb.status.name() == 'RESOLVED'  ? 'border-green-600/40 text-green-700' :
-                                 'border-black/20 text-[#716b61]')}"
-                                  th:text="${fb.status.name()}">STATUS</span>
-                        </td>
-                        <td>
-                            <span th:if="${fb.rating != null}" class="flex items-center gap-0.5">
-                                <i th:each="s : ${#numbers.sequence(1,5)}"
-                                   th:class="${'fa-star text-xs ' + (s <= fb.rating ? 'fa-solid text-[#9f6b3e]' : 'fa-regular text-black/20')}"></i>
-                            </span>
-                            <span th:unless="${fb.rating != null}" class="text-xs text-[#716b61]">—</span>
-                        </td>
-                        <td class="text-sm text-[#5f584d]"
-                            th:text="${fb.anonymous ? 'Anonymous' : (fb.user != null ? fb.user.name : '—')}">User</td>
-                        <td class="text-xs text-[#716b61]"
-                            th:text="${#temporals.format(fb.createdAt, 'dd MMM yyyy')}">Date</td>
-                        <td class="text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <a th:href="@{/admin/feedback/{id}(id=${fb.id})}"
-                                   class="ghost-button editorial-button px-4 py-2 text-xs">View</a>
-                                <form th:action="@{/admin/feedback/{id}/delete(id=${fb.id})}" method="post"
-                                      onsubmit="return confirm('Delete this feedback?')">
-                                    <button type="submit" class="danger-button editorial-button px-3 py-2 text-xs">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
+<tr>
+    <th class="text-left">#</th>
+    <th class="text-left">Subject</th>
+    <th class="text-left">Type</th>
+    <th class="text-left">Status</th>
+    <th class="text-left">Visible</th>
+    <th class="text-left">Rating</th>
+    <th class="text-left">User</th>
+    <th class="text-left">Date</th>
+    <th></th>
+</tr>
+</thead>
+
+<tbody>
+<tr th:each="fb : ${feedbackPage.content}">
+
+    <!-- ID -->
+    <td class="text-xs text-[#716b61]" th:text="${fb.id}">
+        1
+    </td>
+
+    <!-- Subject -->
+    <td>
+        <p class="font-semibold text-primary"
+           th:text="${#strings.abbreviate(fb.subject, 48)}">
+            Subject
+        </p>
+
+        <p class="mt-0.5 text-xs text-[#716b61]"
+           th:text="${#strings.abbreviate(fb.message, 72)}">
+            Message preview
+        </p>
+    </td>
+
+    <!-- Type -->
+    <td>
+        <span class="status-badge border-[rgba(159,107,62,0.4)] text-accent text-[10px]"
+              th:text="${fb.type.name().replace('_',' ')}">
+            TYPE
+        </span>
+    </td>
+
+    <!-- Status -->
+    <td>
+        <span th:class="${'status-badge text-[10px] ' +
+            (fb.status.name() == 'PENDING'   ? 'border-yellow-500/40 text-yellow-700' :
+             fb.status.name() == 'REVIEWED'  ? 'border-blue-500/40 text-blue-700' :
+             fb.status.name() == 'RESOLVED'  ? 'border-green-600/40 text-green-700' :
+             'border-black/20 text-[#716b61]')}"
+
+              th:text="${fb.status.name()}">
+            STATUS
+        </span>
+    </td>
+
+    <!-- NEW VISIBILITY COLUMN -->
+    <td>
+
+        <!-- PUBLIC -->
+        <span th:if="${fb.published}"
+              class="status-badge border-green-500/40 text-green-700 text-[10px]">
+            PUBLIC
+        </span>
+
+        <!-- PRIVATE -->
+        <span th:unless="${fb.published}"
+              class="status-badge border-black/20 text-[#716b61] text-[10px]">
+            PRIVATE
+        </span>
+
+    </td>
+
+    <!-- Rating -->
+    <td>
+
+        <span th:if="${fb.rating != null}"
+              class="flex items-center gap-0.5">
+
+            <i th:each="s : ${#numbers.sequence(1,5)}"
+               th:class="${'fa-star text-xs ' +
+               (s <= fb.rating ?
+               'fa-solid text-[#9f6b3e]' :
+               'fa-regular text-black/20')}">
+            </i>
+
+        </span>
+
+        <span th:unless="${fb.rating != null}"
+              class="text-xs text-[#716b61]">
+            —
+        </span>
+
+    </td>
+
+    <!-- User -->
+    <td class="text-sm text-[#5f584d]"
+        th:text="${fb.anonymous ? 'Anonymous' : (fb.user != null ? fb.user.name : '—')}">
+        User
+    </td>
+
+    <!-- Date -->
+    <td class="text-xs text-[#716b61]"
+        th:text="${#temporals.format(fb.createdAt, 'dd MMM yyyy')}">
+        Date
+    </td>
+
+    <!-- Actions -->
+    <td class="text-right">
+
+        <div class="flex items-center justify-end gap-2">
+
+            <!-- View -->
+            <a th:href="@{/admin/feedback/{id}(id=${fb.id})}"
+               class="ghost-button editorial-button px-4 py-2 text-xs">
+
+                View
+
+            </a>
+
+            <!-- Delete -->
+            <form th:action="@{/admin/feedback/{id}/delete(id=${fb.id})}"
+                  method="post"
+                  onsubmit="return confirm('Delete this feedback?')">
+
+                <button type="submit"
+                        class="danger-button editorial-button px-3 py-2 text-xs">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </td>
+
+</tr>
+</tbody>
             </table>
         </div>
 

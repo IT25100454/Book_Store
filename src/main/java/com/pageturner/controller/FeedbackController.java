@@ -25,7 +25,8 @@ public class FeedbackController {
     }
 
     @GetMapping("/submit")
-    public String submitForm(Model model) {
+    public String submitForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        if (userDetails == null) return "redirect:/login";
         model.addAttribute("feedback", new Feedback());
         model.addAttribute("types", FeedbackType.values());
         return "feedback/submit";
@@ -35,9 +36,10 @@ public class FeedbackController {
     public String submit(@ModelAttribute Feedback feedback,
                          @AuthenticationPrincipal UserDetails userDetails,
                          RedirectAttributes redirectAttributes) {
+        if (userDetails == null) return "redirect:/login";
         try {
             User user = userService.findByUsername(userDetails.getUsername());
-            if (user == null) throw new IllegalStateException("User not found");
+            if (user == null) return "redirect:/login";
             feedbackService.submit(feedback, user);
             redirectAttributes.addFlashAttribute("success", "Thank you — your feedback has been received.");
         } catch (Exception e) {
@@ -48,6 +50,7 @@ public class FeedbackController {
 
     @GetMapping("/my-feedback")
     public String myFeedback(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        if (userDetails == null) return "redirect:/login";
         User user = userService.findByUsername(userDetails.getUsername());
         if (user == null) return "redirect:/login";
         model.addAttribute("feedbacks", feedbackService.getByUser(user));
