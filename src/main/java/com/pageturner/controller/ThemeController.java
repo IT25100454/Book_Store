@@ -77,7 +77,7 @@ public class ThemeController {
     @PostMapping("/delete")
     public String deleteTheme(@RequestParam("theme") String theme, RedirectAttributes redirectAttributes) {
         themeService.deleteCustomTheme(theme);
-        redirectAttributes.addFlashAttribute("success", "Custom theme deleted.");
+
         return "redirect:/admin/theme";
     }
 }
