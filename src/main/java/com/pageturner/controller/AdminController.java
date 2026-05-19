@@ -8,7 +8,6 @@ import com.pageturner.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
@@ -24,19 +23,27 @@ public class AdminController {
             Arrays.asList("Pending", "Processing", "Shipped", "Delivered", "Cancelled");
 
     private final BookService bookService;
+    private final AuthorService authorService;
     private final OrderService orderService;
     private final UserService userService;
     private final ReportService reportService;
     private final NotificationService notificationService;
-    private  final AuthorController authorController;
+    private final EmailNotificationService emailNotificationService;
 
-    public AdminController(BookService bookService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService, AuthorController authorController) {
+    public AdminController(BookService bookService,
+                           AuthorService authorService,
+                           OrderService orderService,
+                           UserService userService,
+                           ReportService reportService,
+                           NotificationService notificationService,
+                           EmailNotificationService emailNotificationService) {
         this.bookService = bookService;
+        this.authorService = authorService;
         this.orderService = orderService;
         this.userService = userService;
         this.reportService = reportService;
         this.notificationService = notificationService;
-        this.authorController = authorController;
+        this.emailNotificationService = emailNotificationService;
     }
 
     @GetMapping
@@ -118,32 +125,55 @@ public class AdminController {
     }
 
     // --- Author Management ---
+
     @GetMapping("/authors")
-    public ModelAndView listAuthors(Model model, RedirectAttributes redirectAttributes) {
-        return authorController.listAuthors(model, redirectAttributes);
+    public String listAuthors(Model model, RedirectAttributes redirectAttributes) {
+        try {
+            model.addAttribute("authors", authorService.getAllAuthors());
+            return "admin/authors/list";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Could not load authors: " + e.getMessage());
+            return "redirect:/admin";
+        }
     }
 
     @GetMapping("/authors/add")
-    public ModelAndView showAddAuthorForm(Model model) {
-        return authorController.showAddAuthorForm(model);
+    public String showAddAuthorForm(Model model) {
+        model.addAttribute("author", new Author());
+        return "admin/authors/form";
     }
 
     @PostMapping("/authors/save")
     public String saveAuthor(@ModelAttribute Author author, RedirectAttributes redirectAttributes) {
-        return authorController.saveAuthor(author, redirectAttributes);
+        authorService.saveAuthor(author);
+        redirectAttributes.addFlashAttribute("success", "Author saved successfully.");
+        return "redirect:/admin/authors";
     }
 
     @GetMapping("/authors/edit/{id}")
     public String showEditAuthorForm(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
-        return authorController.showEditAuthorForm(id, model, redirectAttributes);
+        try {
+            model.addAttribute("author", authorService.getAuthorById(id));
+            return "admin/authors/form";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Could not load author: " + e.getMessage());
+            return "redirect:/admin/authors";
+        }
     }
 
     @GetMapping("/authors/delete/{id}")
     public String deleteAuthor(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        return authorController.deleteAuthor(id, redirectAttributes);
+        try {
+            authorService.deleteAuthor(id);
+            redirectAttributes.addFlashAttribute("success", "Author deleted successfully.");
+        } catch(Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Cannot delete author.");
+        }
+        return "redirect:/admin/authors";
     }
 
     // --- Order Management ---
+
     @GetMapping("/orders")
     public String listOrders(Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -169,6 +199,11 @@ public class AdminController {
                 if (!updatedOrder.getStatus().equals(previousStatus)) {
                     try {
                         notificationService.notifyOrderStatusChange(updatedOrder);
+                        emailNotificationService.sendOrderStatusEmail(
+                                updatedOrder,
+                                "Order Status Updated - #" + updatedOrder.getOrderNumber(),
+                                "Your order status has been updated to " + updatedOrder.getStatus() + "."
+                        );
                     } catch (Exception notificationError) {
                         System.err.println("Order status notification failed for order #" + updatedOrder.getOrderNumber() + ": " + notificationError.getMessage());
                     }

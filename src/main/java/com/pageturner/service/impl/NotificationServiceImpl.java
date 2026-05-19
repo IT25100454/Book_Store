@@ -41,20 +41,20 @@ public class NotificationServiceImpl implements NotificationService {
         String message = "";
         switch (order.getStatus()) {
             case "Processing" -> {
-                title = "Order Being Processed 📦";
-                message = "Your order #" + order.getOrderNumber() + " is now being processed. We'll ship it soon!";
+                title = "Order #" + order.getOrderNumber() + " Processing";
+                message = "Your order #" + order.getOrderNumber() + " is now being processed.";
             }
             case "Shipped" -> {
-                title = "Order Shipped 🚚";
-                message = "Great news! Your order #" + order.getOrderNumber() + " has been shipped and is on its way to you.";
+                title = "Order #" + order.getOrderNumber() + " Shipped";
+                message = "Your order #" + order.getOrderNumber() + " has been shipped.";
             }
             case "Delivered" -> {
-                title = "Order Delivered ✅";
-                message = "Your order #" + order.getOrderNumber() + " has been delivered. Enjoy your books!";
+                title = "Order #" + order.getOrderNumber() + " Delivered";
+                message = "Your order #" + order.getOrderNumber() + " has been delivered.";
             }
             case "Cancelled" -> {
-                title = "Order Cancelled ❌";
-                message = "Your order #" + order.getOrderNumber() + " has been cancelled. Contact us if you have questions.";
+                title = "Order #" + order.getOrderNumber() + " Cancelled";
+                message = "Your order #" + order.getOrderNumber() + " has been cancelled.";
             }
         }
         if (!title.isEmpty()) {

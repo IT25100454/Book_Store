@@ -63,12 +63,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getOrderById(Long id) {
-        return orderRepository.findById(id).orElse(null);
+        return orderRepository.findByIdWithUserAndItems(id).orElse(null);
     }
 
     @Override
+    @Transactional
     public Order updateOrderStatus(Long orderId, String status) {
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByIdWithUserAndItems(orderId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Order not found with ID: " + orderId));
         String normalized = normalizeStatus(status);
@@ -88,6 +89,12 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("Invalid order status: " + status);
         }
         String lower = trimmed.toLowerCase(Locale.ROOT);
+        if ("proceeded".equals(lower)) {
+            return "Processing";
+        }
+        if ("canceled".equals(lower)) {
+            return "Cancelled";
+        }
         return Character.toUpperCase(lower.charAt(0)) + lower.substring(1);
     }
 

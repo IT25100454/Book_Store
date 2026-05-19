@@ -11,14 +11,14 @@ public abstract class BaseEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    private Long id;
 
     @CreationTimestamp
     @Column(updatable = false)
-    protected LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    protected LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 
     public Long getId() {
         return id;
