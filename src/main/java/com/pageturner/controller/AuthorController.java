@@ -20,8 +20,6 @@ public class AuthorController {
         this.authorService = authorService;
     }
 
-    // --- Author Management ---
-
     @GetMapping("/")
     public ModelAndView listAuthors(Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -42,6 +40,12 @@ public class AuthorController {
 
     @PostMapping("/save")
     public String saveAuthor(@ModelAttribute Author author, RedirectAttributes redirectAttributes) {
+        String photoUrl = author.getPhotoUrl();
+        Long id = author.getId();
+        if(photoUrl.length() > 510) {
+            redirectAttributes.addFlashAttribute("error", "Photo URL is Too Long");
+            return "redirect:/admin/authors";
+        }
         authorService.saveAuthor(author);
         redirectAttributes.addFlashAttribute("success", "Author saved successfully.");
         return "redirect:/admin/authors";
@@ -58,7 +62,7 @@ public class AuthorController {
         }
     }
 
-    @GetMapping("/delete/{id}")
+    @GetMapping("/authors/delete/{id}")
     public String deleteAuthor(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             authorService.deleteAuthor(id);
@@ -68,5 +72,4 @@ public class AuthorController {
         }
         return "redirect:/admin/authors";
     }
-
 }
