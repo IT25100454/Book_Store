@@ -1,7 +1,6 @@
 package com.pageturner.service;
 
 import com.pageturner.model.Author;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
 
