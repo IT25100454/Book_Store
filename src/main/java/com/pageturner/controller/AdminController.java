@@ -5,15 +5,13 @@ import com.pageturner.model.Book;
 import com.pageturner.model.Order;
 import com.pageturner.model.User;
 import com.pageturner.service.*;
-import com.pageturner.service.impl.AuthorServiceImpl;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,16 +24,14 @@ public class AdminController {
             Arrays.asList("Pending", "Processing", "Shipped", "Delivered", "Cancelled");
 
     private final BookService bookService;
-    private final AuthorService authorService;
     private final OrderService orderService;
     private final UserService userService;
     private final ReportService reportService;
     private final NotificationService notificationService;
-    private final AuthorController authorController;
+    private  final AuthorController authorController;
 
-    public AdminController(BookService bookService, AuthorService authorService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService, AuthorController authorController) {
+    public AdminController(BookService bookService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService, AuthorController authorController) {
         this.bookService = bookService;
-        this.authorService = authorService;
         this.orderService = orderService;
         this.userService = userService;
         this.reportService = reportService;
@@ -123,39 +119,31 @@ public class AdminController {
 
     // --- Author Management ---
     @GetMapping("/authors")
-    public String listAuthors(Model model, RedirectAttributes redirectAttributes) {
-        try {
-            model.addAttribute("authors", authorService.getAllAuthors());
-            return "admin/authors/list";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Could not load authors: " + e.getMessage());
-            return "redirect:/admin";
-        }
+    public ModelAndView listAuthors(Model model, RedirectAttributes redirectAttributes) {
+        return authorController.listAuthors(model, redirectAttributes);
     }
 
     @GetMapping("/authors/add")
-    public String showAddAuthorForm(Model model) {
-        model.addAttribute("author", new Author());
-        return "admin/authors/form";
+    public ModelAndView showAddAuthorForm(Model model) {
+        return authorController.showAddAuthorForm(model);
     }
 
     @PostMapping("/authors/save")
     public String saveAuthor(@ModelAttribute Author author, RedirectAttributes redirectAttributes) {
-        return authorController.saveAuthor(author,redirectAttributes);
+        return authorController.saveAuthor(author, redirectAttributes);
     }
 
     @GetMapping("/authors/edit/{id}")
     public String showEditAuthorForm(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
-        return authorController.showEditAuthorForm(id,model,redirectAttributes);
+        return authorController.showEditAuthorForm(id, model, redirectAttributes);
     }
 
     @GetMapping("/authors/delete/{id}")
     public String deleteAuthor(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        return authorController.deleteAuthor(id,redirectAttributes);
+        return authorController.deleteAuthor(id, redirectAttributes);
     }
 
     // --- Order Management ---
-
     @GetMapping("/orders")
     public String listOrders(Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -174,19 +162,30 @@ public class AdminController {
             @RequestParam("status") String status,
             RedirectAttributes redirectAttributes) {
         try {
-            orderService.updateOrderStatus(orderId, status);
-            Order updatedOrder = orderService.getOrderById(orderId);
+            Order existingOrder = orderService.getOrderById(orderId);
+            String previousStatus = existingOrder != null ? existingOrder.getStatus() : null;
+            Order updatedOrder = orderService.updateOrderStatus(orderId, status);
             if (updatedOrder != null) {
-                notificationService.notifyOrderStatusChange(updatedOrder);
-                updatedOrder.getItems().forEach(item -> {
-                    if (item.getBook().getStockQuantity() < 5) {
-                        userService.getAllUsers().stream()
-                                .filter(u -> "ROLE_ADMIN".equals(u.getRole()))
-                                .forEach(admin -> notificationService.notifyAdminLowStock(item.getBook(), admin));
+                if (!updatedOrder.getStatus().equals(previousStatus)) {
+                    try {
+                        notificationService.notifyOrderStatusChange(updatedOrder);
+                    } catch (Exception notificationError) {
+                        System.err.println("Order status notification failed for order #" + updatedOrder.getOrderNumber() + ": " + notificationError.getMessage());
                     }
-                });
+                }
+                try {
+                    updatedOrder.getItems().forEach(item -> {
+                        if (item.getBook().getStockQuantity() < 5) {
+                            userService.getAllUsers().stream()
+                                    .filter(u -> "ROLE_ADMIN".equals(u.getRole()))
+                                    .forEach(admin -> notificationService.notifyAdminLowStock(item.getBook(), admin));
+                        }
+                    });
+                } catch (Exception notificationError) {
+                    System.err.println("Low stock notification failed after order #" + updatedOrder.getOrderNumber() + " status update: " + notificationError.getMessage());
+                }
             }
-            redirectAttributes.addFlashAttribute("success", "Order #" + orderId + " status updated to " + status);
+            redirectAttributes.addFlashAttribute("success", "Order #" + orderId + " status updated to " + updatedOrder.getStatus());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to update order: " + e.getMessage());
         }
@@ -207,7 +206,7 @@ public class AdminController {
     }
 
     @PostMapping("/users/toggle-active")
-    public String toggleUserActive(@RequestParam("userId") Long userId, RedirectAttributes redirectAttributes, Principal principal) {
+    public String toggleUserActive(@RequestParam("userId") Long userId, RedirectAttributes redirectAttributes, java.security.Principal principal) {
         try {
             User user = userService.getUserById(userId);
             if (user == null) {
@@ -246,7 +245,7 @@ public class AdminController {
 
     @PostMapping("/users/delete/{id}")
     public String deleteUser(@PathVariable("id") Long id,
-                             Authentication authentication,
+                             org.springframework.security.core.Authentication authentication,
                              RedirectAttributes redirectAttributes) {
         try {
             // Prevent admin from deleting their own account
