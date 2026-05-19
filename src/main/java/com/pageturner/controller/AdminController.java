@@ -24,14 +24,30 @@ public class AdminController {
             Arrays.asList("Pending", "Processing", "Shipped", "Delivered", "Cancelled");
 
     private final BookService bookService;
+<<<<<<< Updated upstream
+=======
+    private final AuthorController authorController;
+>>>>>>> Stashed changes
     private final OrderService orderService;
     private final UserService userService;
     private final ReportService reportService;
     private final NotificationService notificationService;
     private  final AuthorController authorController;
 
+<<<<<<< Updated upstream
     public AdminController(BookService bookService, OrderService orderService, UserService userService, ReportService reportService, NotificationService notificationService, AuthorController authorController) {
         this.bookService = bookService;
+=======
+    public AdminController(BookService bookService,
+                           AuthorController authorController,
+                           OrderService orderService,
+                           UserService userService,
+                           ReportService reportService,
+                           NotificationService notificationService,
+                           EmailNotificationService emailNotificationService) {
+        this.bookService = bookService;
+        this.authorController = authorController;
+>>>>>>> Stashed changes
         this.orderService = orderService;
         this.userService = userService;
         this.reportService = reportService;
@@ -120,7 +136,11 @@ public class AdminController {
     // --- Author Management ---
     @GetMapping("/authors")
     public ModelAndView listAuthors(Model model, RedirectAttributes redirectAttributes) {
+<<<<<<< Updated upstream
         return authorController.listAuthors(model, redirectAttributes);
+=======
+        return authorController.listAuthors(model,redirectAttributes);
+>>>>>>> Stashed changes
     }
 
     @GetMapping("/authors/add")
@@ -130,17 +150,40 @@ public class AdminController {
 
     @PostMapping("/authors/save")
     public String saveAuthor(@ModelAttribute Author author, RedirectAttributes redirectAttributes) {
+<<<<<<< Updated upstream
         return authorController.saveAuthor(author, redirectAttributes);
+=======
+        if(author.getName().length()>125) {
+            redirectAttributes.addFlashAttribute("error", "Name length should be less than 100 characters");
+            return "redirect:/admin/authors";
+        }else if(author.getPhotoUrl().length()>510){
+            redirectAttributes.addFlashAttribute("error", "PhotoUrl length should be less than 510 characters");
+            return "redirect:/admin/authors";
+        } else if (author.getNationality().length()>100) {
+            redirectAttributes.addFlashAttribute("error", "Nationality length should be less than 100 characters");
+            return "redirect:/admin/authors";
+        } else {
+            return authorController.saveAuthor(author, redirectAttributes);
+        }
+>>>>>>> Stashed changes
     }
 
     @GetMapping("/authors/edit/{id}")
     public String showEditAuthorForm(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+<<<<<<< Updated upstream
         return authorController.showEditAuthorForm(id, model, redirectAttributes);
+=======
+        return authorController.showEditAuthorForm(id,model,redirectAttributes);
+>>>>>>> Stashed changes
     }
 
     @GetMapping("/authors/delete/{id}")
     public String deleteAuthor(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+<<<<<<< Updated upstream
         return authorController.deleteAuthor(id, redirectAttributes);
+=======
+        return authorController.deleteAuthor(id,redirectAttributes);
+>>>>>>> Stashed changes
     }
 
     // --- Order Management ---
