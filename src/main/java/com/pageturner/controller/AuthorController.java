@@ -40,10 +40,8 @@ public class AuthorController {
 
     @PostMapping("/save")
     public String saveAuthor(@ModelAttribute Author author, RedirectAttributes redirectAttributes) {
-        String photoUrl = author.getPhotoUrl();
-        Long id = author.getId();
-        if(photoUrl.length() > 510) {
-            redirectAttributes.addFlashAttribute("error", "Photo URL is Too Long");
+        if (author.getPhotoUrl() != null && author.getPhotoUrl().length() > 510) {
+            redirectAttributes.addFlashAttribute("error", "Photo URL is too long");
             return "redirect:/admin/authors";
         }
         authorService.saveAuthor(author);
