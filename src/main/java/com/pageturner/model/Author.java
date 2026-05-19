@@ -9,17 +9,24 @@ import jakarta.validation.constraints.Size;
 @Table(name = "authors")
 public class Author extends BaseEntity {
 
+    @Size(max = 125)
     @Column(nullable = false)
     private String name;
 
+    @Size(max = 100)
     @Column(nullable = false)
     private String nationality;
 
     @Column(columnDefinition = "TEXT")
     private String bio;
 
+<<<<<<< Updated upstream
     @Size(max = 510, message = "Photo URL cannot exceed 510 characters")
     @Column(name = "photoUrl", length = 510)
+=======
+    @Size(max = 510, message = "Photo URL need to be less than 510")
+    @Column(nullable = false)
+>>>>>>> Stashed changes
     private String photoUrl;
 
     public Author() {

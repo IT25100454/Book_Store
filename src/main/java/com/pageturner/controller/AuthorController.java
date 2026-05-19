@@ -3,6 +3,7 @@ package com.pageturner.controller;
 import com.pageturner.model.Author;
 import com.pageturner.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,14 +23,9 @@ public class AuthorController {
 
     @GetMapping("/")
     public ModelAndView listAuthors(Model model, RedirectAttributes redirectAttributes) {
-        try {
-            ModelAndView modelAndView = new ModelAndView("admin/authors/list");
-            model.addAttribute("authors", authorService.getAllAuthors());
-            return modelAndView;
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Could not load authors: " + e.getMessage());
-            return new ModelAndView("index");
-        }
+        ModelAndView modelAndView = new ModelAndView("admin/authors/list");
+        model.addAttribute("authors", authorService.getAllAuthors());
+        return modelAndView;
     }
 
     @GetMapping("/add")
@@ -40,12 +36,6 @@ public class AuthorController {
 
     @PostMapping("/save")
     public String saveAuthor(@ModelAttribute Author author, RedirectAttributes redirectAttributes) {
-        String photoUrl = author.getPhotoUrl();
-        Long id = author.getId();
-        if(photoUrl.length() > 510) {
-            redirectAttributes.addFlashAttribute("error", "Photo URL is Too Long");
-            return "redirect:/admin/authors";
-        }
         authorService.saveAuthor(author);
         redirectAttributes.addFlashAttribute("success", "Author saved successfully.");
         return "redirect:/admin/authors";
