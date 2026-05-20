@@ -3,11 +3,15 @@ package com.pageturner.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
 public class User extends BaseEntity {
 
+    @NotBlank(message = "required")
+    @Size(min = 4, max = 20, message = "Username 4 -20")
     @Column(unique = true, nullable = false)
     private String username;
 
